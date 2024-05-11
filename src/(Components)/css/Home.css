@@ -1,0 +1,88 @@
+/* Header.css */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Set minimum height of the app to 100% of viewport height */
+}
+
+.header-logo {
+  height: 40px;
+  pointer-events: none;
+}
+
+.header-header {
+  background-color: white;
+  min-height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  color: black;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+}
+
+.logo span {
+  font-size: 1.2em;
+  margin-left: 40px;
+}
+
+.navigation-bars {
+  display: flex;
+}
+
+.navigation-bars nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+}
+
+.navigation-bars nav ul li {
+  margin-right: 100px; /* Remove margin between nav items */
+}
+
+.navigation-bars nav ul li a {
+  text-decoration: none;
+  color: black;
+}
+
+/* Additional styling as needed */
+.main {
+  flex-grow: 1; /* Occupy all available space */
+  padding: 50px;
+  overflow-y: auto; /* Enable vertical scrollbar when content overflows */
+}
+
+/* Footer */
+.footer-footer {
+  background-color: white;
+  padding: 20px;
+  color: black;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  margin-top: auto; /* Push footer to the bottom */
+}card
+
+.footer-footer nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0; /* Remove the default margin */
+  display: flex;
+  justify-content: center;
+}
+
+.footer-footer nav ul li {
+  margin-right: 50px;
+}
+
+.footer-footer nav ul li a {
+  text-decoration: none;
+  color: black;
+}
