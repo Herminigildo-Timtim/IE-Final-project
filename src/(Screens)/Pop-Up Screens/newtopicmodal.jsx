@@ -7,36 +7,51 @@ import TextField from "@mui/material/TextField";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function NewTopicModal ({onClose, open}){
+import { web3 } from '@project-serum/anchor';
+import { SystemProgram } from "@solana/web3.js";
+
+function NewTopicModal({ onClose, open, getProvider, createCustomProgram, postList }) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [tags, setTags] = useState([]);
     const [allTags, setAllTags] = useState([]);
-    // const [myTags, setMyTags] = useState([]); for when api for solana is ready
     const [openMyTags, setOpenMyTags] = useState(false);
     const [openAllTags, setOpenAllTags] = useState(false);
 
     const myTags = ['Science', 'Math', 'Technology'];
 
     useEffect(() => {
-        /* API to get the tags and save the values */
-    }, [])
+        // API to get the tags and save the values
+    }, []);
 
-    const handleMyTags = (event) => {
+    const handleMyTags = () => {
         setOpenMyTags(true);
     };
 
-    const handleAllTags = (event) => {
+    const handleAllTags = () => {
         setOpenAllTags(true);
-    }
+    };
 
-    const handlePost = () => {
+    const handlePost = async () => {
         if (!title || !tags.length || !description) {
             toast.error("Please fill out all fields!");
         } else {
-            toast.success("Topic Posted");
+            try {
+                await createPost(
+                    getProvider,
+                    createCustomProgram,
+                    postList,
+                    setTitle,
+                    setDescription,
+                    setTags
+                );
+                toast.success("Topic Posted");
+                onClose();
+            } catch (error) {
+                toast.error("Failed to post topic");
+                console.error("Error creating post:", error);
+            }
         }
-        onClose();
     };
 
     const handleTagsClose = (selectedTags) => {
@@ -45,10 +60,36 @@ function NewTopicModal ({onClose, open}){
         setTags(selectedTags);
     };
 
+    const createPost = async (getProvider, createCustomProgram, postList, setTitle, setDescription, setTags) => {
+        try {
+            const provider = getProvider();
+            const program = await createCustomProgram();
+
+            const postAccount = web3.Keypair.generate();
+
+            await program.rpc.initPost({
+                accounts: {
+                    postAccount: postAccount.publicKey,
+                    authority: provider.wallet.publicKey,
+                    systemProgram: SystemProgram.programId,
+                    clock: web3.SYSVAR_CLOCK_PUBKEY,
+                },
+                signers: [postAccount],
+            });
+            postList();
+            setTitle("");
+            setDescription("");
+            setTags([]);
+            console.log("Created a new PostAccount w/ address:", postAccount.publicKey.toString());
+        } catch (error) {
+            console.log("Error in creating PostAccount: ", error);
+        }
+    };
+
     return (
         <>
             <Modal
-                open={true}
+                open={open}
                 onClose={onClose}
             >
                 <Box sx={style}>
@@ -70,11 +111,11 @@ function NewTopicModal ({onClose, open}){
                     />
 
                     {/* Tag for the topic */}
-                    <Typography style={{marginBottom: '10px'}}>
+                    <Typography style={{ marginBottom: '10px' }}>
                         Tag
                     </Typography>
-                    <div style={{flex: '1', flexDirection: "row"}}>
-                        <Button onClick={handleMyTags} variant="contained" style={{marginRight: "20px"}}>
+                    <div style={{ flex: '1', flexDirection: "row" }}>
+                        <Button onClick={handleMyTags} variant="contained" style={{ marginRight: "20px" }}>
                             <Typography>
                                 My Tags
                             </Typography>
@@ -89,7 +130,7 @@ function NewTopicModal ({onClose, open}){
                     </div>
 
                     {tags.length > 0 && (
-                        <Box style={{marginTop: "10px"}}>
+                        <Box style={{ marginTop: "10px" }}>
                             {tags.map((tag, index) => (
                                 <Box key={index} sx={{ display: 'inline-block', marginRight: '10px', marginBottom: '10px' }}>
                                     <Typography variant="body1" sx={{ padding: '8px', backgroundColor: '#f0f0f0', borderRadius: '4px', display: 'inline-block' }}>
@@ -101,7 +142,7 @@ function NewTopicModal ({onClose, open}){
                     )}
 
                     {/* For the topic description */}
-                    <Typography style={{marginBottom: '10px'}}>
+                    <Typography style={{ marginBottom: '10px' }}>
                         Description
                     </Typography>
                     <TextField
@@ -118,7 +159,7 @@ function NewTopicModal ({onClose, open}){
                     />
 
                     {/* Button for post */}
-                    <Typography style={{ textAlign: 'center'}}>
+                    <Typography style={{ textAlign: 'center' }}>
                         <Button
                             variant="contained"
                             onClick={handlePost}
@@ -167,7 +208,7 @@ const OwnedTags = ({ open, myTags, onClose }) => {
     };
 
     return (
-        <Modal open={open}>
+        <Modal open={open} onClose={() => onClose(selectedTags)}>
             <Box sx={style}>
                 <Typography variant="h6">Owned Tags</Typography>
                 <div>
@@ -178,13 +219,13 @@ const OwnedTags = ({ open, myTags, onClose }) => {
                                 variant={selectedTags.includes(tag) ? "contained" : "outlined"}
                                 className="tag-button"
                                 onClick={() => handleTagClick(tag)}
-                                style={{marginRight: '10px'}}
+                                style={{ marginRight: '10px' }}
                             >
                                 {tag}
                             </Button>
                         ))}
                     </div>
-                    <div style={{marginTop: '5px', display: 'flex', justifyContent: 'center'}}>
+                    <div style={{ marginTop: '5px', display: 'flex', justifyContent: 'center' }}>
                         <Button onClick={handleClose} variant="contained">
                             Ok
                         </Button>
@@ -213,7 +254,7 @@ const AllTags = ({ open, allTags, onClose }) => {
     };
 
     return (
-        <Modal open={open}>
+        <Modal open={open} onClose={() => onClose(selectedTags)}>
             <Box sx={style}>
                 <Typography variant="h6">All Tags</Typography>
                 <div>
@@ -224,13 +265,13 @@ const AllTags = ({ open, allTags, onClose }) => {
                                 variant={selectedTags.includes(tag) ? "contained" : "outlined"}
                                 className="tag-button"
                                 onClick={() => handleTagClick(tag)}
-                                style={{marginRight: '10px'}}
+                                style={{ marginRight: '10px' }}
                             >
                                 {tag}
                             </Button>
                         ))}
                     </div>
-                    <Button onClick={handleClose}>
+                    <Button onClick={handleClose} variant="contained">
                         Ok
                     </Button>
                 </div>

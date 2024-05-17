@@ -10,12 +10,7 @@ import Topvotedpost from './(Screens)/topvotedpost';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-<<<<<<< HEAD
-    {/* <Home></Home> */}
-    <App/>
-=======
     <App />
->>>>>>> a479d899d9a8ac1d1fdaf199ca9d4260cce86b10
   </React.StrictMode>
 );
 

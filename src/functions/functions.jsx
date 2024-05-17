@@ -78,20 +78,49 @@ export const commentList = async (createCustomProgram) => {
   }
 };
 
-export const createComment = async (content, selectedPostKey, commentInput, getProvider, createCustomProgram, setCommentInput, updateBalance, postList, commentList, setSelectedPostComment) => {
-  try {
-    // Check if the content is empty or ""
-    if (!content || content.trim() === "") {
-      console.log("Content is empty. Comment not created.");
-      return;
-    }
+// export const createComment = async (content, selectedPostKey, commentInput, getProvider, createCustomProgram, setCommentInput, updateBalance, postList, commentList, setSelectedPostComment) => {
+//   try {
+//     // Check if the content is empty or ""
+//     if (!content || content.trim() === "") {
+//       console.log("Content is empty. Comment not created.");
+//       return;
+//     }
 
+//     const provider = getProvider();
+//     const program = await createCustomProgram();
+
+//     const commentAccount = web3.Keypair.generate();
+
+//     await program.rpc.createComment(content, {
+//       accounts: {
+//         commentAccount: commentAccount.publicKey,
+//         postAccount: new PublicKey(selectedPostKey),
+//         authority: provider.wallet.publicKey,
+//         systemProgram: SystemProgram.programId,
+//         clock: web3.SYSVAR_CLOCK_PUBKEY,
+//       },
+//       signers: [commentAccount],
+//     });
+
+//     console.log("Created a new CommentAccount w/ address:", commentAccount.publicKey.toString());
+//     setCommentInput("");
+//     updateBalance();
+//     postList();
+//     commentList();
+//     setSelectedPostComment((prevComment) => prevComment + 1);
+//   } catch (error) {
+//     console.log("Error in creating Comment: ", error);
+//   }
+// };
+
+export const commentsList = async (selectedPostKey, getProvider, createCustomProgram, postList, commentList, setSelectedPostComment) => {
+  try {
     const provider = getProvider();
     const program = await createCustomProgram();
 
     const commentAccount = web3.Keypair.generate();
 
-    await program.rpc.createComment(content, {
+    await program.rpc.commentsList({
       accounts: {
         commentAccount: commentAccount.publicKey,
         postAccount: new PublicKey(selectedPostKey),
@@ -102,42 +131,11 @@ export const createComment = async (content, selectedPostKey, commentInput, getP
       signers: [commentAccount],
     });
 
-    console.log("Created a new CommentAccount w/ address:", commentAccount.publicKey.toString());
-    setCommentInput("");
-    updateBalance();
     postList();
     commentList();
     setSelectedPostComment((prevComment) => prevComment + 1);
   } catch (error) {
     console.log("Error in creating Comment: ", error);
-  }
-};
-
-export const createPost = async (name, getProvider, createCustomProgram, postList, setTopicInput) => {
-  try {
-    if (!name || name.trim() === "") {
-      console.log("Content is empty. Topic not created.");
-      return;
-    }
-    const provider = getProvider();
-    const program = await createCustomProgram();
-
-    const postAccount = web3.Keypair.generate();
-
-    await program.rpc.initPost(name, {
-      accounts: {
-        postAccount: postAccount.publicKey,
-        authority: provider.wallet.publicKey,
-        systemProgram: SystemProgram.programId,
-        clock: web3.SYSVAR_CLOCK_PUBKEY,
-      },
-      signers: [postAccount],
-    });
-    postList();
-    setTopicInput("");
-    console.log("Created a new PostAccount w/ address:", postAccount.publicKey.toString());
-  } catch (error) {
-    console.log("Error in creating PostAccount: ", error);
   }
 };
 
