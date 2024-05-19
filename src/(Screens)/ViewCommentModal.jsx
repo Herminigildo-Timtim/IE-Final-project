@@ -7,13 +7,13 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: '80%', 
-    maxWidth: 1000, 
+    maxWidth: 600, 
     height: 'auto', 
     maxHeight: '80vh',
     backgroundColor: 'white', 
     borderRadius: 10, 
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-    padding: 20,
+    padding: 5,
     overflowY: 'auto',
 };
 
@@ -38,8 +38,8 @@ const ViewCommentModal = ({ open, handleClose, commentDetails }) => {
             aria-describedby="modal-description"
         >
             <Box sx={style}>
-                <Typography id="modal-title" variant="h6" component="h2">
-                    {commentDetails?.account?.content?.toString()}
+                <Typography id="modal-title" variant="h4" component="h2">
+                    <strong>{commentDetails?.account?.content?.toString()}</strong>
                 </Typography>
                 <Typography id="modal-publickey" sx={{ mt: 1 }}>
                     Commented by: {commentDetails?.account?.user?.toString()}

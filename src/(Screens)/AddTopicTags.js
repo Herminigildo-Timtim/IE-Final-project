@@ -13,11 +13,11 @@ const PROGRAM_ID = new PublicKey(idl.metadata.address);
 const network = "https://api.devnet.solana.com";
 
 const AddTopicTags = () => {
-    
-    const [footer] = useState(['Home', 'About Us', 'Contact', 'Term & Condition']);
-    const [nav] = useState(['Home', 'Top Votes', 'Top Comments']);
+    const [footer] = useState(['About Us', 'Terns of Service', 'Privacy Policy', 'Contact Us']);
+    const [nav] = useState(['New Topic', 'Hot Picks', 'Trending Tags', 'Top Voted']);
     const [topicTags, setTopicTags] = useState([]);
     const [selectedTag, setSelectedTag] = useState(null);
+
     useEffect(() => {
         fetchTags();
       }, []);
@@ -26,8 +26,9 @@ const AddTopicTags = () => {
         preflightCommitment: "processed"
     }
 
-    const handleTagClick = (tagName) => {
-        setSelectedTag(tagName);
+    const handleTagClick = (tag) => {
+        setSelectedTag(tag);
+        console.log(selectedTag);
       };
     
       const handleCloseModal = () => {
@@ -35,34 +36,43 @@ const AddTopicTags = () => {
       };
 
     const fetchTags = async () => {
-        const connection = new Connection(network, opts.preflightCommitment);
-        const provider = new AnchorProvider(connection, window.solana, opts);
-        const program = new Program(idl, PROGRAM_ID, provider);
-    
-        try {
-            const fetchedTags = await program.account.addTagAccount.all();
-            console.log("Fetched Tags:", fetchedTags);
-    
-            const tagCounts = {};
-            fetchedTags.forEach(tag => {
-                const tagName = tag.account.name;
-                tagCounts[tagName] = (tagCounts[tagName] || 0) + 1;
-            });
-    
-            // Convert the tagCounts object to an array of { tagName, count } objects
-            const tagCountsArray = Object.keys(tagCounts).map(tagName => ({
-                tagName,
-                count: tagCounts[tagName]
-            }));
-    
-            tagCountsArray.sort((a, b) => b.count - a.count);
-    
-            console.log("Sorted Tag Counts:", tagCountsArray);
-            setTopicTags(tagCountsArray);
-        } catch (error) {
-            console.error("Error fetching tags:", error);
-        }
-    };
+    const connection = new Connection(network, opts.preflightCommitment);
+    const provider = new AnchorProvider(connection, window.solana, opts);
+    const program = new Program(idl, PROGRAM_ID, provider);
+
+    try {
+        const fetchedTags = await program.account.addTagAccount.all();
+        console.log("Fetched Tags:", fetchedTags);
+
+        const tagCounts = {};
+        fetchedTags.forEach(tag => {
+            const tagName = tag.account.name;
+            const tagId = tag.account.id.toString();
+
+            if (!tagCounts[tagName]) {
+                tagCounts[tagName] = { count: 0, ids: '' };
+            }
+            tagCounts[tagName].count += 1;
+            tagCounts[tagName].ids = tagId;
+        });
+
+        // Convert the tagCounts object to an array of { tagName, count, ids } objects
+        const tagCountsArray = Object.keys(tagCounts).map(tagName => ({
+            tagName,
+            count: tagCounts[tagName].count,
+            id: tagCounts[tagName].ids,
+        }));
+
+        // Sort the array by count in descending order
+        tagCountsArray.sort((a, b) => b.count - a.count);
+
+        console.log("Sorted Tag Counts:", tagCountsArray);
+        setTopicTags(tagCountsArray);
+    } catch (error) {
+        console.error("Error fetching tags:", error);
+    }
+};
+
 
     return(
         <div>
@@ -91,7 +101,7 @@ const AddTopicTags = () => {
                     </Typography>
                     <Grid container spacing={2}>
                         {topicTags.map((tag, index) => (
-                            <Grid item key={index} xs={12} sm={6} md={3} onClick={() => handleTagClick(tag.tagName)}>
+                            <Grid item key={index} xs={12} sm={6} md={3} onClick={() => handleTagClick(tag)}>
                                 <Card>
                                     <CardContent>
                                         <Typography variant="h6">{tag.tagName}</Typography>
@@ -116,7 +126,7 @@ const AddTopicTags = () => {
                     </Grid>
                 </Container>
             </footer>
-            <ViewTagPostModal tagName={selectedTag} open={!!selectedTag} close={handleCloseModal} />
+            {selectedTag && <ViewTagPostModal tagName={selectedTag.tagName} open={!!selectedTag} close={handleCloseModal} ids={selectedTag.ids}/>}
         </div>
     );
   };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Box, Typography, Button, Grid, Card, CardContent } from '@mui/material';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { Program, AnchorProvider, setProvider } from '@project-serum/anchor';
+import { Program, AnchorProvider} from '@project-serum/anchor';
 import idl from '../idl.json';
 import ViewCommentModal from './ViewCommentModal';
 import CommentModal from './Pop-Up Screens/commentmodal';
@@ -15,11 +15,14 @@ const style = {
     height: 500,
     bgcolor: 'background.paper',
     border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
+    backgroundColor: 'white', 
+    borderRadius: 10, 
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+    padding: 5,
+    overflowY: 'auto',
 };
 
-const PROGRAM_ID = new PublicKey('BEVinZuS49SupTm5yihoaALrxdoqzvkFn5JH7933rkie');
+const PROGRAM_ID = new PublicKey(idl.metadata.address);
 const network = "https://api.devnet.solana.com";
 const opts = { preflightCommitment: "processed" };
 
@@ -94,14 +97,14 @@ const TopicModal = ({ open, handleClose, topic, walletAddress }) => {
             aria-describedby="modal-description"
         ><>
             <Box sx={style}>
-                <Typography id="modal-title" variant="h6" component="h2">
+                <Typography id="modal-title" variant="h4" component="h2">
                     {topic?.account?.name}
                 </Typography>
                 <Typography id="modal-publickey" sx={{ mt: 2 }}>
                     Post Public Key: {postPublicKey}
                 </Typography>
                 <Typography id="modal-description" sx={{ mt: 2 }}>
-                    {topic ? `This topic has ${topic.account.commentCount} comments.` : 'No topic selected.'}
+                    {topic ? `This topic has ${topic.account.commentCount} comment(s).` : 'No topic selected.'}
                 </Typography>
                 <div style={{overflowY: 'scroll', height: '333px'}}>
                     {comments.map((comment) => (
