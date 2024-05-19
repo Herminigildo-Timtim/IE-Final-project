@@ -1,60 +1,24 @@
 import '../AddTopicMostComment.css';
 import { useEffect, useState } from "react";
-import { Container, Box, Typography, TextField, Button, AppBar, Toolbar, IconButton, Grid, Card, CardContent } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { Container, Box, Typography, Button, AppBar, Toolbar, IconButton, Grid, Card, CardContent } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import * as Web3 from '@solana/web3.js';
 import idl from '../idl.json';
 import { Buffer } from "buffer";
-import { PublicKey, SystemProgram, Connection, Keypair, clusterApiUrl } from "@solana/web3.js";
-import { Program, AnchorProvider, web3 } from '@project-serum/anchor';
+import { PublicKey, Connection} from "@solana/web3.js";
+import { Program, AnchorProvider } from '@project-serum/anchor';
+import ViewTagPostModal from './ViewTagPostModal';
 
 window.Buffer = Buffer;
-const programID = new PublicKey('GBsJRQGqouAVpVC5Snouf6vsuVciLKfaMSmxoYqJ1o3k');
+const PROGRAM_ID = new PublicKey(idl.metadata.address);
 const network = "https://api.devnet.solana.com";
 
-const AddTopicTags = ({walletAddress, balance}) => {
-    const PROGRAM_ID = new PublicKey(idl.metadata.address);
-    // const [walletAddress, setWalletAddress] = useState(null);
+const AddTopicTags = () => {
+    
     const [footer] = useState(['Home', 'About Us', 'Contact', 'Term & Condition']);
     const [nav] = useState(['Home', 'Top Votes', 'Top Comments']);
     const [topicTags, setTopicTags] = useState([]);
-    const [tagName, setTagName] = useState('');
-    // const [balance, setBalance] = useState(null);
-
-    // const connectWallet = async () => {
-    //     const { solana } = window;
-    //     try {
-    //       if (solana) {
-    //         const response = await solana.connect();
-    //         setWalletAddress(response.publicKey.toString());
-      
-    //         // Move the console.log after setting the state
-    //         console.log("Wallet Address:", response.publicKey.toString());
-    //         fetchBalance(response.publicKey.toString());
-    //         // Create a PublicKey instance after setting walletAddress
-            
-    //       }
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   }
-
-    //   const fetchBalance = async (walletAddress) => {
-    //     try {
-    //       const connection = new Web3.Connection(Web3.clusterApiUrl("devnet"));
-    //       const publicKeyObj = new Web3.PublicKey(walletAddress);
-    //       const solBalance = await connection.getBalance(publicKeyObj);
-    //       // Divide the balance by 1,000,000,000
-    //       const adjustedBalance = solBalance / 1000000000;
-    //       setBalance(adjustedBalance); // Update the balance state here
-    //       return adjustedBalance;
-    //     } catch (error) {
-    //       console.error("Error fetching balance:", error);
-    //     }
-    //   };
+    const [selectedTag, setSelectedTag] = useState(null);
     useEffect(() => {
-        // connectWallet();
         fetchTags();
       }, []);
 
@@ -62,63 +26,44 @@ const AddTopicTags = ({walletAddress, balance}) => {
         preflightCommitment: "processed"
     }
 
-    const getProvider = () => {
-        const connection = new Connection(network, opts.preflightCommitment);
-        const provider = new AnchorProvider(
-            connection,
-            window.solana,
-            opts.preflightCommitment,
-        );
-        return provider;
-    };
-    const createCustomProgram = async () => {
-        console.log("PROGRAM_ID:", PROGRAM_ID.toString());
-        return new Program(idl, PROGRAM_ID, getProvider());
-      }
+    const handleTagClick = (tagName) => {
+        setSelectedTag(tagName);
+      };
+    
+      const handleCloseModal = () => {
+        setSelectedTag(null);
+      };
+
     const fetchTags = async () => {
         const connection = new Connection(network, opts.preflightCommitment);
         const provider = new AnchorProvider(connection, window.solana, opts);
-        const program = new Program(idl, programID, provider);
-
+        const program = new Program(idl, PROGRAM_ID, provider);
+    
         try {
-            const fetchedTags = await program.account.tagAccount.all();
+            const fetchedTags = await program.account.addTagAccount.all();
             console.log("Fetched Tags:", fetchedTags);
-            setTopicTags(fetchedTags);
+    
+            const tagCounts = {};
+            fetchedTags.forEach(tag => {
+                const tagName = tag.account.name;
+                tagCounts[tagName] = (tagCounts[tagName] || 0) + 1;
+            });
+    
+            // Convert the tagCounts object to an array of { tagName, count } objects
+            const tagCountsArray = Object.keys(tagCounts).map(tagName => ({
+                tagName,
+                count: tagCounts[tagName]
+            }));
+    
+            tagCountsArray.sort((a, b) => b.count - a.count);
+    
+            console.log("Sorted Tag Counts:", tagCountsArray);
+            setTopicTags(tagCountsArray);
         } catch (error) {
             console.error("Error fetching tags:", error);
         }
     };
 
-    const handleAddTag = async () => {
-        const provider = getProvider();
-        const program = await createCustomProgram();
-        const tagAccount = web3.Keypair.generate();
-
-        try {
-            const tx = await program.rpc.addTag(tagName, {
-                accounts: {
-                    tagAccount: tagAccount.publicKey,
-                    authority: provider.wallet.publicKey,
-                    systemProgram: SystemProgram.programId,
-                },
-                signers: [tagAccount],
-                instructions: [
-                    SystemProgram.createAccount({
-                        fromPubkey: provider.wallet.publicKey,
-                        newAccountPubkey: tagAccount.publicKey,
-                        space: program.account.tagAccount.size,
-                        lamports: await provider.connection.getMinimumBalanceForRentExemption(program.account.tagAccount.size),
-                        programId: program.programId,
-                    }),
-                ],
-            });
-
-            console.log("Tag added successfully", tx);
-            fetchTags();
-        } catch (error) {
-            console.error("Error adding tag:", error);
-        }
-    };
     return(
         <div>
             <AppBar position="static" style={{backgroundColor: 'white', color: 'black'}}>
@@ -139,32 +84,18 @@ const AddTopicTags = ({walletAddress, balance}) => {
                     </IconButton>
                 </Toolbar>
             </AppBar>
-            <Container>
-                <Box my={4}>
-                    <Typography variant="h4" gutterBottom>
-                        Add Topic Tags
-                    </Typography>
-                    <TextField
-                        label="Enter tag name"
-                        variant="outlined"
-                        value={tagName}
-                        onChange={(e) => setTagName(e.target.value)}
-                        style={{ marginRight: 16 }}
-                    />
-                    <Button variant="contained" color="primary" onClick={handleAddTag} style={{backgroundColor: 'black', height: '56px', width: '120px'}}>
-                        Add Tag
-                    </Button>
-                </Box>
-                <Box my={4}>
+            <Container sx={{ height: '77.1vh' }}>
+                <Box mt={4}>
                     <Typography variant="h4" gutterBottom>
                         Topic Tags List
                     </Typography>
                     <Grid container spacing={2}>
-                        {topicTags.map((tag) => (
-                            <Grid item key={tag.publicKey.toString()} xs={12} sm={6} md={4}>
+                        {topicTags.map((tag, index) => (
+                            <Grid item key={index} xs={12} sm={6} md={3} onClick={() => handleTagClick(tag.tagName)}>
                                 <Card>
                                     <CardContent>
-                                        <Typography variant="h6">{tag.account.tagName}</Typography>
+                                        <Typography variant="h6">{tag.tagName}</Typography>
+                                        <Typography variant="h6">{tag.count} post</Typography>
                                     </CardContent>
                                 </Card>
                             </Grid>
@@ -172,17 +103,20 @@ const AddTopicTags = ({walletAddress, balance}) => {
                     </Grid>
                 </Box>
             </Container>
-            <Box mt={5} py={3} bgcolor="grey.200">
+            <footer style={{ marginTop: '10px', padding: '20px 0', backgroundColor: '#f5f5f5' }}>
                 <Container>
-                    <Grid container spacing={3}>
-                        {footer.map((topic, index) => (
-                            <Grid item key={index}>
-                                <Typography>{topic}</Typography>
-                            </Grid>
-                        ))}
+                    <Grid container justifyContent="center">
+                        <Grid item>
+                            <Typography variant="body1">
+                                {footer.map((topic, index) => (
+                                    <span key={index} style={{ margin: '0 10px' }}>{topic}</span>
+                                ))}
+                            </Typography>
+                        </Grid>
                     </Grid>
                 </Container>
-            </Box>
+            </footer>
+            <ViewTagPostModal tagName={selectedTag} open={!!selectedTag} close={handleCloseModal} />
         </div>
     );
   };

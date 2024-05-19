@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import { AppBar, Toolbar, Typography, Container, Grid, Card, CardContent, IconButton, Button } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import TopicModal from './TopicModal';
@@ -13,20 +13,6 @@ window.Buffer = Buffer;
 const programID = new PublicKey('BEVinZuS49SupTm5yihoaALrxdoqzvkFn5JH7933rkie');
 const network = "https://api.devnet.solana.com";
 const opts = { preflightCommitment: "processed" };
-
-// const fetchTopics = async (setTopic) => {
-//     const connection = new Connection(network, opts.preflightCommitment);
-//     const provider = new AnchorProvider(connection, window.solana, opts);
-//     const program = new Program(idl, programID, provider);
-
-//     try {
-//         const fetchedTopics = await program.account.postAccount.all();
-//         const sortedTopics = fetchedTopics.sort((a, b) => b.account.commentCount - a.account.commentCount);
-//         setTopic(sortedTopics);
-//     } catch (error) {
-//         console.error("Error fetching tags:", error);
-//     }
-// };
 
 const fetchTopics = async (setTopic, excludePublicKeys) => {
     const connection = new Connection(network, opts.preflightCommitment);
