@@ -12,7 +12,7 @@ function App() {
       <Routes>
         <Route path="/topTopics" element={<MostCommentedTopics />} />
         <Route path="/addTags" element={<AddTopicTags />} />
-        <Route path="/landingpage" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />
       </Routes>
     </Router>
   );

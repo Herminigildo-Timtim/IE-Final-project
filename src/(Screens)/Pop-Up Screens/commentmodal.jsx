@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { Button, Typography, Modal, TextField, Box } from "@mui/material";
 import { toast } from "react-toastify";
 import { web3 } from '@project-serum/anchor';
-import { SystemProgram } from "@solana/web3.js";
-import { PublicKey } from "@solana/web3.js";
+import { SystemProgram, PublicKey } from "@solana/web3.js";
 import 'react-toastify/dist/ReactToastify.css';
 
-function CommentModal({ open, onClose, selectedPostKey, getProvider, createCustomProgram, updateBalance, commentList, setSelectedPostComment }) {
+function CommentModal({ open, onClose, selectedPostKey, getProvider, createCustomProgram, updateBalance, setSelectedPostComment }) {
     const [commentInput, setCommentInput] = useState('');
 
     const handleComment = async () => {
@@ -21,7 +20,6 @@ function CommentModal({ open, onClose, selectedPostKey, getProvider, createCusto
                     createCustomProgram,
                     setCommentInput,
                     updateBalance,
-                    commentList,
                     setSelectedPostComment
                 );
                 toast.success("Comment Posted");
@@ -70,11 +68,10 @@ const style = {
 
 export default CommentModal;
 
-export const createComment = async (selectedPostKey, commentInput, getProvider, createCustomProgram, updateBalance, setCommentInput, setSelectedPostComment) => {
+export const createComment = async (selectedPostKey, commentInput, getProvider, createCustomProgram, setCommentInput, updateBalance, setSelectedPostComment) => {
     try {
       const provider = getProvider();
       const program = await createCustomProgram();
-  
       const commentAccount = web3.Keypair.generate();
   
       await program.rpc.createComment(commentInput, {
@@ -95,4 +92,4 @@ export const createComment = async (selectedPostKey, commentInput, getProvider, 
     } catch (error) {
       console.log("Error in creating Comment: ", error);
     }
-  };
+};

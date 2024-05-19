@@ -2,8 +2,9 @@ import { Program, AnchorProvider, web3 } from '@project-serum/anchor';
 import { SystemProgram } from "@solana/web3.js";
 import { PublicKey, Connection, clusterApiUrl } from "@solana/web3.js";
 import * as Web3 from "@solana/web3.js"
+import { useState } from "react";
 
-export const connectWallet = async (setWalletAddress, fetchBalance) => {
+export const connectWallet = async (setWalletAddress, fetchBalance, balance) => {
   const { solana } = window;
   try {
     if (solana) {
@@ -11,10 +12,10 @@ export const connectWallet = async (setWalletAddress, fetchBalance) => {
       setWalletAddress(response.publicKey.toString());
 
       // Move the console.log after setting the state
-      console.log("Wallet Address:", response.publicKey.toString());
       fetchBalance(response.publicKey.toString());
+      console.log("balance sa connect: " + fetchBalance(response.publicKey.toString()));
+      console.log("Address sa connect: " + response.publicKey.toString());
       // Create a PublicKey instance after setting walletAddress
-
     }
   } catch (error) {
     console.log(error);
