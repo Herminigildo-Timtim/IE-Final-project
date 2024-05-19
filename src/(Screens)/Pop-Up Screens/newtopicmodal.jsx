@@ -14,23 +14,12 @@ function NewTopicModal({ onClose, open, getProvider, createCustomProgram, postLi
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [tags, setTags] = useState([]);
-    const [allTags, setAllTags] = useState([]);
     const [openMyTags, setOpenMyTags] = useState(false);
     const [openAllTags, setOpenAllTags] = useState(false);
-
-    const myTags = ['Science', 'Math', 'Technology'];
 
     useEffect(() => {
         // API to get the tags and save the values
     }, []);
-
-    const handleMyTags = () => {
-        setOpenMyTags(true);
-    };
-
-    const handleAllTags = () => {
-        setOpenAllTags(true);
-    };
 
     const handlePost = async () => {
         if (!title || !tags.length || !description) {
@@ -54,6 +43,9 @@ function NewTopicModal({ onClose, open, getProvider, createCustomProgram, postLi
         }
     };
 
+    const addTag = () => {
+
+    }
     const handleTagsClose = (selectedTags) => {
         setOpenMyTags(false);
         setOpenAllTags(false);
@@ -64,7 +56,6 @@ function NewTopicModal({ onClose, open, getProvider, createCustomProgram, postLi
         try {
             const provider = getProvider();
             const program = await createCustomProgram();
-
             const postAccount = web3.Keypair.generate();
 
             await program.rpc.initPost({
@@ -115,18 +106,9 @@ function NewTopicModal({ onClose, open, getProvider, createCustomProgram, postLi
                         Tag
                     </Typography>
                     <div style={{ flex: '1', flexDirection: "row" }}>
-                        <Button onClick={handleMyTags} variant="contained" style={{ marginRight: "20px" }}>
-                            <Typography>
-                                My Tags
-                            </Typography>
+                        <Button onClick={addTag}>
+                            Add Tag
                         </Button>
-                        {openMyTags && <OwnedTags myTags={myTags} open={openMyTags} onClose={handleTagsClose} />}
-                        <Button onClick={handleAllTags} variant="contained">
-                            <Typography>
-                                All Tags
-                            </Typography>
-                        </Button>
-                        {openAllTags && <AllTags allTags={allTags} open={openAllTags} onClose={handleTagsClose} />}
                     </div>
 
                     {tags.length > 0 && (
@@ -189,95 +171,54 @@ const style = {
     p: 4,
 };
 
-const OwnedTags = ({ open, myTags, onClose }) => {
-    const [selectedTags, setSelectedTags] = useState([]);
-
-    // Function to handle tag click
-    const handleTagClick = (tag) => {
-        setSelectedTags((prevTags) => {
-            if (prevTags.includes(tag)) {
-                return prevTags.filter((prevTag) => prevTag !== tag);
-            } else {
-                return [...prevTags, tag];
-            }
-        });
-    };
-
-    const handleClose = () => {
-        onClose(selectedTags);
-    };
-
-    return (
-        <Modal open={open} onClose={() => onClose(selectedTags)}>
-            <Box sx={style}>
-                <Typography variant="h6">Owned Tags</Typography>
-                <div>
-                    <div className="tag-grid">
-                        {myTags.map((tag, index) => (
-                            <Button
-                                key={index}
-                                variant={selectedTags.includes(tag) ? "contained" : "outlined"}
-                                className="tag-button"
-                                onClick={() => handleTagClick(tag)}
-                                style={{ marginRight: '10px' }}
-                            >
-                                {tag}
-                            </Button>
-                        ))}
-                    </div>
-                    <div style={{ marginTop: '5px', display: 'flex', justifyContent: 'center' }}>
-                        <Button onClick={handleClose} variant="contained">
-                            Ok
-                        </Button>
-                    </div>
-                </div>
-            </Box>
-        </Modal>
-    );
-}
-
-const AllTags = ({ open, allTags, onClose }) => {
-    const [selectedTags, setSelectedTags] = useState([]);
-
-    const handleTagClick = (tag) => {
-        setSelectedTags((prevTags) => {
-            if (prevTags.includes(tag)) {
-                return prevTags.filter((prevTag) => prevTag !== tag);
-            } else {
-                return [...prevTags, tag];
-            }
-        });
-    };
-
-    const handleClose = () => {
-        onClose(selectedTags);
-    };
-
-    return (
-        <Modal open={open} onClose={() => onClose(selectedTags)}>
-            <Box sx={style}>
-                <Typography variant="h6">All Tags</Typography>
-                <div>
-                    <div className="tag-grid">
-                        {allTags.map((tag, index) => (
-                            <Button
-                                key={index}
-                                variant={selectedTags.includes(tag) ? "contained" : "outlined"}
-                                className="tag-button"
-                                onClick={() => handleTagClick(tag)}
-                                style={{ marginRight: '10px' }}
-                            >
-                                {tag}
-                            </Button>
-                        ))}
-                    </div>
-                    <Button onClick={handleClose} variant="contained">
-                        Ok
-                    </Button>
-                </div>
-            </Box>
-        </Modal>
-    );
-}
-
 export default NewTopicModal;
+
+
+export function AddTag({ openTag, closeTag }) {
+    const [tag, setTag] = useState("");
+    const [tags, setTags] = useState([]);
+
+    const handleAddTag = () => {
+        if (tag.trim() !== "") {
+            setTags([...tags, tag]);
+            setTag("");
+        }
+    };
+
+    return (
+        <Modal
+            open={openTag}
+            onClose={closeTag}
+        >
+            <Box sx={style}>
+                <TextField
+                    variant="filled"
+                    placeholder="Add Tag"
+                    className="topic"
+                    value={tag}
+                    onChange={(event) => setTag(event.target.value)}
+                    required
+                    style={{
+                        width: '100%',
+                        marginBottom: '20px',
+                    }}
+                />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAddTag}
+                    style={{
+                        width: '100%',
+                    }}
+                >
+                    Add Tag
+                </Button>
+                <div style={{ marginTop: '20px' }}>
+                    {tags.map((tag, index) => (
+                        <div key={index}>{tag}</div>
+                    ))}
+                </div>
+            </Box>
+        </Modal>
+    );
+}

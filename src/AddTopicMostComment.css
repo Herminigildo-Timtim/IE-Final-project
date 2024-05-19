@@ -126,9 +126,11 @@
   text-align: left; 
 }
 
-.popularTopic, .topVoteTopic{
+.popularTopic{
   width: 300px;
-  height: auto;
+  height: 200px;
+  overflow-y: hidden;
+  padding-bottom: 20px;
   padding-bottom: 20px;
   margin-bottom: 20px;
   background-color: #ffffff;

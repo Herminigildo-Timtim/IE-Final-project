@@ -2,7 +2,7 @@ import React from 'react';
 import './../(Components)/css/Home.css' // Import your CSS file for styling
 import logo from './../(Components)/images/logo.webp';
 
-function Home() {
+function Home({walletAddress, balance}) {
   return (
     <div className="app">
       <header className="header-header">

@@ -3,9 +3,10 @@ import { Button, Typography, Modal, TextField, Box } from "@mui/material";
 import { toast } from "react-toastify";
 import { web3 } from '@project-serum/anchor';
 import { SystemProgram, PublicKey } from "@solana/web3.js";
+import { fetchComments } from "../TopicModal";
 import 'react-toastify/dist/ReactToastify.css';
 
-function CommentModal({ open, onClose, selectedPostKey, getProvider, createCustomProgram, updateBalance, setSelectedPostComment }) {
+function CommentModal({ open, onClose, selectedPostKey, getProvider, createCustomProgram, setSelectedPostComment, walletAddress, publicKey, comments }) {
     const [commentInput, setCommentInput] = useState('');
 
     const handleComment = async () => {
@@ -19,8 +20,10 @@ function CommentModal({ open, onClose, selectedPostKey, getProvider, createCusto
                     getProvider,
                     createCustomProgram,
                     setCommentInput,
-                    updateBalance,
-                    setSelectedPostComment
+                    setSelectedPostComment,
+                    walletAddress,
+                    publicKey,
+                    comments
                 );
                 toast.success("Comment Posted");
             } catch (error) {
@@ -68,7 +71,7 @@ const style = {
 
 export default CommentModal;
 
-export const createComment = async (selectedPostKey, commentInput, getProvider, createCustomProgram, setCommentInput, updateBalance, setSelectedPostComment) => {
+export const createComment = async (selectedPostKey, commentInput, getProvider, createCustomProgram, setCommentInput, setSelectedPostComment, publicKey, comments) => {
     try {
       const provider = getProvider();
       const program = await createCustomProgram();
@@ -87,7 +90,6 @@ export const createComment = async (selectedPostKey, commentInput, getProvider, 
   
       console.log("Created a new CommentAccount w/ address:", commentAccount.publicKey.toString());
       setCommentInput("");
-      updateBalance();
       setSelectedPostComment((prevComment) => prevComment + 1);
     } catch (error) {
       console.log("Error in creating Comment: ", error);

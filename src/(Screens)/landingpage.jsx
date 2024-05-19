@@ -4,17 +4,21 @@ import { connectWallet, fetchBalance } from "../functions/functions.jsx";
 import "../(Components)/css/LandingPage.css";
 import first from "../(Components)/images/first.svg";
 import second from "../(Components)/images/second.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function LandingPage() {
   const [walletAddress, setWalletAddress] = useState('');
   const [balance, setBalance] = useState(0);
+  const navigate = useNavigate();
 
   const handleConnectWallet = async () => {
     await connectWallet(setWalletAddress, (walletAddress) => {
       fetchBalance(walletAddress)
         .then((adjustedBalance) => {
           setBalance(adjustedBalance);
+          // for checking prints
+          console.log(adjustedBalance);
+          navigate("/topTopics", { state: { walletAddress, balance } });
         })
         .catch((error) => {
           console.error("Error fetching balance:", error);
@@ -97,7 +101,6 @@ function LandingPage() {
             <Link className="link"> Contact Support </Link>
             <Link className="link"> FAQs </Link>
         </Grid>
-           
     </div>
   );
 }
