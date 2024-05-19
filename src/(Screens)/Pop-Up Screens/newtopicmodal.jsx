@@ -1,224 +1,218 @@
-import React, { useEffect, useState } from "react";
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
-import { web3 } from '@project-serum/anchor';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { web3 } from "@project-serum/anchor";
 import { SystemProgram } from "@solana/web3.js";
 
-function NewTopicModal({ onClose, open, getProvider, createCustomProgram, postList }) {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [tags, setTags] = useState([]);
-    const [openMyTags, setOpenMyTags] = useState(false);
-    const [openAllTags, setOpenAllTags] = useState(false);
+function NewTopicModal({ onClose, open, getProvider, createCustomProgram }) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState([]);
+  const [tag, setTag] = useState("");
 
-    useEffect(() => {
-        // API to get the tags and save the values
-    }, []);
-
-    const handlePost = async () => {
-        if (!title || !tags.length || !description) {
-            toast.error("Please fill out all fields!");
-        } else {
-            try {
-                await createPost(
-                    getProvider,
-                    createCustomProgram,
-                    postList,
-                    setTitle,
-                    setDescription,
-                    setTags
-                );
-                toast.success("Topic Posted");
-                onClose();
-            } catch (error) {
-                toast.error("Failed to post topic");
-                console.error("Error creating post:", error);
-            }
-        }
-    };
-
-    const addTag = () => {
-
+  const handlePost = async () => {
+    if (!title || !tags.length || !description) {
+      toast.error("Please fill out all fields!");
+    } else {
+      try {
+        await createPost(
+          getProvider,
+          createCustomProgram,
+          title,
+          description,
+          tags
+        );
+        toast.success("Topic Posted");
+        onClose();
+      } catch (error) {
+        toast.error("Failed to post topic");
+        console.error("Error creating post:", error);
+      }
     }
-    const handleTagsClose = (selectedTags) => {
-        setOpenMyTags(false);
-        setOpenAllTags(false);
-        setTags(selectedTags);
-    };
+  };
 
-    const createPost = async (getProvider, createCustomProgram, postList, setTitle, setDescription, setTags) => {
-        try {
-            const provider = getProvider();
-            const program = await createCustomProgram();
-            const postAccount = web3.Keypair.generate();
+  const createPost = async (
+    getProvider,
+    createCustomProgram,
+    title,
+    description,
+    tags
+  ) => {
+    try {
+      const provider = getProvider();
+      const program = await createCustomProgram();
+      const postAccount = web3.Keypair.generate();
 
-            await program.rpc.initPost({
-                accounts: {
-                    postAccount: postAccount.publicKey,
-                    authority: provider.wallet.publicKey,
-                    systemProgram: SystemProgram.programId,
-                    clock: web3.SYSVAR_CLOCK_PUBKEY,
-                },
-                signers: [postAccount],
-            });
-            postList();
-            setTitle("");
-            setDescription("");
-            setTags([]);
-            console.log("Created a new PostAccount w/ address:", postAccount.publicKey.toString());
-        } catch (error) {
-            console.log("Error in creating PostAccount: ", error);
-        }
-    };
+      await program.rpc.initPost(title, description, tags.join(","), {
+        accounts: {
+          postAccount: postAccount.publicKey,
+          authority: provider.wallet.publicKey,
+          systemProgram: SystemProgram.programId,
+          clock: web3.SYSVAR_CLOCK_PUBKEY,
+        },
+        signers: [postAccount],
+      });
 
-    return (
-        <>
-            <Modal
-                open={open}
-                onClose={onClose}
-            >
-                <Box sx={style}>
-                    {/* For Topic Title */}
-                    <Typography variant="h6">
-                        Topic
-                    </Typography>
-                    <TextField
-                        variant="filled"
-                        placeholder="Title"
-                        className="topic"
-                        value={title}
-                        onChange={(event) => setTitle(event.target.value)}
-                        required={true}
-                        style={{
-                            width: '100%',
-                            marginBottom: '20px',
-                        }}
-                    />
+      console.log(
+        "Created a new PostAccount w/ address:",
+        postAccount.publicKey.toString()
+      );
+      setTitle("");
+      setDescription("");
+      setTags([]);
 
-                    {/* Tag for the topic */}
-                    <Typography style={{ marginBottom: '10px' }}>
-                        Tag
-                    </Typography>
-                    <div style={{ flex: '1', flexDirection: "row" }}>
-                        <Button onClick={addTag}>
-                            Add Tag
-                        </Button>
-                    </div>
+      // Call AddTag function after creating post
+      for (const tag of tags) {
+        await addTag(provider, program, postAccount, tag);
+      }
+    } catch (error) {
+      console.log("Error in creating PostAccount: ", error);
+    }
+  };
 
-                    {tags.length > 0 && (
-                        <Box style={{ marginTop: "10px" }}>
-                            {tags.map((tag, index) => (
-                                <Box key={index} sx={{ display: 'inline-block', marginRight: '10px', marginBottom: '10px' }}>
-                                    <Typography variant="body1" sx={{ padding: '8px', backgroundColor: '#f0f0f0', borderRadius: '4px', display: 'inline-block' }}>
-                                        {tag}
-                                    </Typography>
-                                </Box>
-                            ))}
-                        </Box>
-                    )}
+  const addTag = async (provider, program, postAccount, tagName) => {
+    try {
+      console.log("Generating keypair for tag account...");
+      const tagAccount = web3.Keypair.generate();
+      console.log("Generated keypair:", tagAccount);
 
-                    {/* For the topic description */}
-                    <Typography style={{ marginBottom: '10px' }}>
-                        Description
-                    </Typography>
-                    <TextField
-                        variant="filled"
-                        placeholder="Topic Description"
-                        className="description"
-                        value={description}
-                        onChange={(event) => setDescription(event.target.value)}
-                        required={true}
-                        style={{
-                            width: '100%',
-                            marginBottom: '20px',
-                        }}
-                    />
+      await program.rpc.addTag(tagName, {
+        accounts: {
+          tagAccount: tagAccount.publicKey,
+          postAccount: postAccount.publicKey,
+          authority: provider.wallet.publicKey,
+          systemProgram: SystemProgram.programId,
+          clock: web3.SYSVAR_CLOCK_PUBKEY,
+        },
+        signers: [tagAccount],
+      });
 
-                    {/* Button for post */}
-                    <Typography style={{ textAlign: 'center' }}>
-                        <Button
-                            variant="contained"
-                            onClick={handlePost}
-                            style={{
-                                backgroundColor: 'white',
-                                color: 'black',
-                            }}
-                        >
-                            POST
-                        </Button>
-                    </Typography>
+      console.log(
+        "Tag associated with address:",
+        tagAccount.publicKey.toString()
+      );
+    } catch (error) {
+      console.log("Error in creating TagAccount: ", error);
+    }
+  };
+
+  const handleAddTag = () => {
+    if (tag.trim() !== "") {
+      setTags([...tags, tag]);
+      setTag("");
+    }
+  };
+
+  return (
+    <>
+      <Modal open={open} onClose={onClose}>
+        <Box sx={style}>
+          {/* For Topic Title */}
+          <Typography variant="h6">Topic</Typography>
+          <TextField
+            variant="filled"
+            placeholder="Title"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            required
+            style={{
+              width: "100%",
+              marginBottom: "20px",
+            }}
+          />
+
+          {/* Tag for the topic */}
+          <Typography style={{ marginBottom: "10px" }}>Tag</Typography>
+          <Box style={{ display: "flex", flexDirection: "row" }}>
+            <TextField
+              variant="filled"
+              placeholder="Add Tag"
+              value={tag}
+              onChange={(event) => setTag(event.target.value)}
+              required
+              style={{
+                flex: 1,
+                marginBottom: "20px",
+              }}
+            />
+            <Button onClick={handleAddTag}>Add Tag</Button>
+          </Box>
+
+          {tags.length > 0 && (
+            <Box style={{ marginTop: "10px" }}>
+              {tags.map((tag, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "inline-block",
+                    marginRight: "10px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      padding: "8px",
+                      backgroundColor: "#f0f0f0",
+                      borderRadius: "4px",
+                      display: "inline-block",
+                    }}
+                  >
+                    {tag}
+                  </Typography>
                 </Box>
-            </Modal>
-        </>
-    );
+              ))}
+            </Box>
+          )}
+
+          {/* For the topic description */}
+          <Typography style={{ marginBottom: "10px" }}>Description</Typography>
+          <TextField
+            variant="filled"
+            placeholder="Topic Description"
+            value={description}
+            onChange={(event) => setDescription(event.target.value)}
+            required
+            style={{
+              width: "100%",
+              marginBottom: "20px",
+            }}
+          />
+
+          {/* Button for post */}
+          <Typography style={{ textAlign: "center" }}>
+            <Button
+              variant="contained"
+              onClick={handlePost}
+              style={{
+                backgroundColor: "white",
+                color: "black",
+              }}
+            >
+              POST
+            </Button>
+          </Typography>
+        </Box>
+      </Modal>
+    </>
+  );
 }
 
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
 };
 
 export default NewTopicModal;
-
-
-export function AddTag({ openTag, closeTag }) {
-    const [tag, setTag] = useState("");
-    const [tags, setTags] = useState([]);
-
-    const handleAddTag = () => {
-        if (tag.trim() !== "") {
-            setTags([...tags, tag]);
-            setTag("");
-        }
-    };
-
-    return (
-        <Modal
-            open={openTag}
-            onClose={closeTag}
-        >
-            <Box sx={style}>
-                <TextField
-                    variant="filled"
-                    placeholder="Add Tag"
-                    className="topic"
-                    value={tag}
-                    onChange={(event) => setTag(event.target.value)}
-                    required
-                    style={{
-                        width: '100%',
-                        marginBottom: '20px',
-                    }}
-                />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleAddTag}
-                    style={{
-                        width: '100%',
-                    }}
-                >
-                    Add Tag
-                </Button>
-                <div style={{ marginTop: '20px' }}>
-                    {tags.map((tag, index) => (
-                        <div key={index}>{tag}</div>
-                    ))}
-                </div>
-            </Box>
-        </Modal>
-    );
-}

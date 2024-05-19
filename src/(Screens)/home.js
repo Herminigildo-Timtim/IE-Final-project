@@ -3,6 +3,7 @@ import "./../(Components)/css/Home.css"; // Import your CSS file for styling
 import logo from "./../(Components)/images/logo.webp";
 import idl from "../idl.json";
 import { Buffer } from "buffer";
+import NewTopicModal from "./Pop-Up Screens/newtopicmodal.jsx";
 import {
   PublicKey,
   SystemProgram,
@@ -23,6 +24,7 @@ function Home({ walletAddress }) {
   const [topVotes, setTopVotes] = useState([]);
   const [topComments, setTopComments] = useState([]);
   const [trendingTags, setTrendingTags] = useState([]);
+  const [isOpenPost, setIsOpenPost] = useState(false);
 
   const opts = {
     preflightCommitment: "processed",
@@ -81,6 +83,14 @@ function Home({ walletAddress }) {
     }
   };
 
+  const newPost = () => {
+    setIsOpenPost(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpenPost(false);
+  };
+
   useEffect(() => {
     postList();
     fetchTags();
@@ -113,20 +123,28 @@ function Home({ walletAddress }) {
         </div>
       </header>
       <div className="main">
-        <button class="btn-31">
-          <span class="text-container">
+        <button className="btn-31" onClick={newPost}>
+          <span className="text-container">
             <span
-              class="text"
+              className="text"
               style={{ color: "white", fontFamily: "sans-serif" }}
             >
               New Post
             </span>
           </span>
         </button>
+        {isOpenPost && (
+          <NewTopicModal
+            open={isOpenPost}
+            onClose={handleCloseModal}
+            getProvider={getProvider}
+            createCustomProgram={createCustomProgram}
+          />
+        )}
         <div className="new-topic">
           <h1>New Topic</h1>
-          {posts.length > 0 ? (
-            <div className="container">
+          {posts.length > 0 && (
+            <div className="contained">
               {posts.map((post, index) => (
                 <div key={index} className="cardcont">
                   <h3>{post.account.name}</h3>
@@ -141,15 +159,13 @@ function Home({ walletAddress }) {
                 </div>
               ))}
             </div>
-          ) : (
-            <p>No new topics available.</p>
           )}
         </div>
 
         <div className="hot-picks">
           <h1>Hot picks</h1>
-          {topComments.length > 0 ? (
-            <div className="container">
+          {topComments.length > 0 && (
+            <div className="contained">
               {topComments.slice(0, 10).map((post, index) => (
                 <div key={index} className="cardcont">
                   <h3>{post.account.name}</h3>
@@ -163,30 +179,26 @@ function Home({ walletAddress }) {
                 </div>
               ))}
             </div>
-          ) : (
-            <p>No hot picks available.</p>
           )}
         </div>
 
         <div className="trending-tags">
           <h1>Trending Tags</h1>
-          {trendingTags.length > 0 ? (
-            <div className="container">
+          {trendingTags.length > 0 && (
+            <div className="contained">
               {trendingTags.map((tag, index) => (
                 <div key={index} className="cardcont">
                   <h3>{tag}</h3>
                 </div>
               ))}
             </div>
-          ) : (
-            <p>No trending tags available.</p>
           )}
         </div>
 
         <div className="top-voted">
           <h1>Top voted</h1>
-          {topVotes.length > 0 ? (
-            <div className="container">
+          {topVotes.length > 0 && (
+            <div className="contained">
               {topVotes.map((post, index) => (
                 <div key={index} className="cardcont">
                   <h3>{post.account.name}</h3>
@@ -201,8 +213,6 @@ function Home({ walletAddress }) {
                 </div>
               ))}
             </div>
-          ) : (
-            <p>No top voted posts available.</p>
           )}
         </div>
       </div>
