@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { AppBar, Toolbar, Typography, Container, Grid, Card, CardContent, IconButton } from '@mui/material';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { AppBar, Toolbar, Typography, Container, Grid, Card, CardContent, IconButton, Button } from '@mui/material';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import TopicModal from './TopicModal';
 import { PublicKey, Connection } from "@solana/web3.js";
 import { Program, AnchorProvider } from '@project-serum/anchor';
@@ -93,23 +93,21 @@ const MostCommentedTopics = () => {
 
     return (
         <div>
-            <AppBar position="static">
+            <AppBar position="static" style={{backgroundColor: 'white', color: 'black'}}>
                 <Toolbar>
+                    <IconButton edge="start" color="inherit" aria-label="menu">
                     <svg className="logoIcon" viewBox="0 0 512 512" width="40" height="40">
                         <path d="M234.5 5.709C248.4 .7377 263.6 .7377 277.5 5.709L469.5 74.28C494.1 83.38 512 107.5 512 134.6V377.4C512 404.5 494.1 428.6 469.5 437.7L277.5 506.3C263.6 511.3 248.4 511.3 234.5 506.3L42.47 437.7C17 428.6 0 404.5 0 377.4V134.6C0 107.5 17 83.38 42.47 74.28L234.5 5.709zM256 65.98L82.34 128L256 190L429.7 128L256 65.98zM288 434.6L448 377.4V189.4L288 246.6V434.6z"></path>
                     </svg>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, marginLeft: 2 }}>
+                    </IconButton>
+                    <Typography variant="h6" style={{ flexGrow: 1 , fontWeight: '800'}}>
                         blockNote
                     </Typography>
-                    <div>
-                        {nav.map((topic, index) => (
-                            <Typography variant="body1" key={index} style={{ margin: '0 10px' }}>
-                                {topic}
-                            </Typography>
-                        ))}
-                    </div>
-                    <IconButton edge="end" color="inherit">
-                        <AccountCircleIcon />
+                    {nav.map((topic, index) => (
+                        <Button key={index} color="inherit">{topic}</Button>
+                    ))}
+                    <IconButton color="inherit">
+                        <AccountCircle />
                     </IconButton>
                 </Toolbar>
             </AppBar>
@@ -131,17 +129,12 @@ const MostCommentedTopics = () => {
                             ))}
                         </Grid>
                     </Grid>
-
                     <Grid item xs={12} md={4}>
                         <Typography variant="h4" gutterBottom>Popular Topics</Typography>
-                        <Grid container spacing={3}>
+                        <Grid container spacing={0.5}>
                             {topVote.map((topic) => (
                                 <Grid item xs={12} key={topic.publicKey.toString()}>
-                                    <Card>
-                                        <CardContent>
-                                            <Typography variant="h6" component="div">{topic.account.name}</Typography>
-                                        </CardContent>
-                                    </Card>
+                                    <Typography variant="h6" component="div" sx={{ pl: 2 }}>{topic.account.name}</Typography>
                                 </Grid>
                             ))}
                         </Grid>
