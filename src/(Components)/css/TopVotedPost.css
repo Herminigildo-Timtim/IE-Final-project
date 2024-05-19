@@ -83,7 +83,7 @@
 }
 
 .main {
-  max-height: calc(84vh - 245px); /* Adjust the value as needed */
+  max-height: calc(84vh - 255px); /* Adjust the value as needed */
   overflow-y: auto;
   margin-left: 50px;
   margin-right: 50px; /* Enable vertical scrollbar when content overflows */
