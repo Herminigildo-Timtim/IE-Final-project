@@ -18,7 +18,7 @@ function LandingPage() {
           setBalance(adjustedBalance);
           // for checking prints
           console.log(adjustedBalance);
-          navigate("/topTopics", { state: { walletAddress, balance } });
+          navigate("/home", { state: { walletAddress } });
         })
         .catch((error) => {
           console.error("Error fetching balance:", error);

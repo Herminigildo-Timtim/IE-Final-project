@@ -1,5 +1,3 @@
-/* Header.css */
-
 .app {
   display: flex;
   flex-direction: column;
@@ -21,6 +19,7 @@
   padding: 10px;
   color: black;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
 }
 
 .logo {
@@ -56,9 +55,13 @@
 
 /* Additional styling as needed */
 .main {
-  flex-grow: 1; /* Occupy all available space */
-  padding: 50px;
-  overflow-y: auto; /* Enable vertical scrollbar when content overflows */
+  max-height: calc(97vh - 243px); /* Adjust the value as needed */
+  overflow-y: auto;
+  padding: 50px; /* Enable vertical scrollbar when content overflows */
+}
+
+.main::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 /* Footer */
@@ -67,8 +70,8 @@
   padding: 20px;
   color: black;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-  margin-top: auto; /* Push footer to the bottom */
-}card
+  margin-top: 20px; /* Push footer to the bottom */
+}
 
 .footer-footer nav ul {
   list-style-type: none;
@@ -85,4 +88,191 @@
 .footer-footer nav ul li a {
   text-decoration: none;
   color: black;
+}
+
+.container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 20px;
+  max-width: calc(100% - 40px); /* Adjust the width as needed */
+  margin-bottom: 20px;
+  position: relative;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+}
+
+.cardcont {
+  background-color: white;
+  width: 400px; /* Adjust the width of the card */
+  margin-right: 20px; /* Adjust spacing between cards */
+  height: 200px;
+  border-radius: 20px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0; /* Prevent cards from shrinking */
+}
+
+.container:hover .cardcont {
+  animation: scrollCards 4s linear infinite;
+}
+
+@keyframes scrollCards {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-100% - 20px)); /* Adjust the width and margin-right */
+  }
+}
+
+/* Existing button styles */
+.btn-31,
+.btn-31 *,
+.btn-31 :after,
+.btn-31 :before,
+.btn-31:after,
+.btn-31:before {
+  border: 0 solid;
+  box-sizing: border-box;
+}
+
+.btn-31 {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: button;
+  background-color: #000;
+  background-image: none;
+  color: #fff;
+  cursor: pointer;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  font-size: 100%;
+  font-weight: 900;
+  line-height: 1.5;
+  margin: 0;
+  -webkit-mask-image: -webkit-radial-gradient(#000, #fff);
+  padding: 0;
+}
+
+.btn-31:disabled {
+  cursor: default;
+}
+
+.btn-31:-moz-focusring {
+  outline: auto;
+}
+
+.btn-31 svg {
+  display: block;
+  vertical-align: middle;
+}
+
+.btn-31 [hidden] {
+  display: none;
+}
+
+.btn-31 {
+  border-width: 1px;
+  padding: 1rem 2rem;
+  position: relative;
+  text-transform: uppercase;
+}
+
+.btn-31:before {
+  --progress: 100%;
+  background: #fff;
+  -webkit-clip-path: polygon(
+    100% 0,
+    var(--progress) var(--progress),
+    0 100%,
+    100% 100%
+  );
+  clip-path: polygon(
+    100% 0,
+    var(--progress) var(--progress),
+    0 100%,
+    100% 100%
+  );
+  content: "";
+  inset: 0;
+  position: absolute;
+  transition: -webkit-clip-path 0.2s ease;
+  transition: clip-path 0.2s ease;
+  transition: clip-path 0.2s ease, -webkit-clip-path 0.2s ease;
+}
+
+.btn-31:hover:before {
+  --progress: 0%;
+}
+
+.btn-31 .text-container {
+  display: block;
+  overflow: hidden;
+  position: relative;
+}
+
+.btn-31 .text {
+  display: block;
+  font-weight: 900;
+  mix-blend-mode: difference;
+  position: relative;
+}
+
+.btn-31:hover .text {
+  -webkit-animation: move-up-alternate 0.3s ease forwards;
+  animation: move-up-alternate 0.3s ease forwards;
+}
+
+@-webkit-keyframes move-up-alternate {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(80%);
+  }
+
+  51% {
+    transform: translateY(-80%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes move-up-alternate {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(80%);
+  }
+
+  51% {
+    transform: translateY(-80%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* New styles for button alignment */
+.button-container {
+  display: flex;
+  justify-content: flex-end; /* Align the container to the right */
+  margin-bottom: 20px; /* Add some spacing below the button */
+}
+
+/* Adjust the button within its container */
+.button-container .btn-31 {
+  margin-right: 0; /* Remove any right margin */
+}
+.main .btn-31 {
+  position: absolute;
+  top: 130px;
+  right: 130px;
 }

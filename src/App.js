@@ -5,11 +5,13 @@ import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import MostCommentedTopics from "./(Screens)/MostCommentedTopics";
 import AddTopicTags from "./(Screens)/AddTopicTags";
 import LandingPage from './(Screens)/landingpage';
+import Home from './(Screens)/home';
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/home" element={<Home />} />
         <Route path="/topTopics" element={<MostCommentedTopics />} />
         <Route path="/addTags" element={<AddTopicTags />} />
         <Route path="/" element={<LandingPage />} />
