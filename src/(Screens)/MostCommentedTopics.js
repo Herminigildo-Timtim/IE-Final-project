@@ -85,17 +85,17 @@ const MostCommentedTopics = ({ walletAddress, balance}) => {
                 </Toolbar>
             </AppBar>
 
-            <Container sx={{ height: '80vh', overflow: 'auto', marginTop: '20px', paddingBottom: '20px', scrollbarWidth: 'none', }}>
+            <Container sx={{  height: 'auto', minHeight: '80.3vh', overflow: 'auto', marginTop: '20px', paddingBottom: '20px', scrollbarWidth: 'none', }}>
                 <Grid container spacing={3} justifyContent="center" >
                     <Grid item xs={12} md={8} sx={{border: '1px solid #ccc', borderRadius: '8px', padding: '20px', marginTop:'30px'}}>
-                        <Typography variant="h4" gutterBottom>Most Commented Topics</Typography>
+                        <Typography variant="h4" gutterBottom><strong>Most Commented Topics</strong></Typography>
                         <Grid container spacing={3}>
                             {topic.map((topic) => (
-                                <Grid item xs={12} key={topic.publicKey.toString()}>
-                                    <Card onClick={() => handleOpenModal(topic)}>
+                                <Grid item xs={12} key={topic.publicKey.toString()} >
+                                    <Card onClick={() => handleOpenModal(topic)} sx={{ '&:hover': { cursor: 'pointer', backgroundColor: 'black', color:'white', transform: 'scale(1.05)'} }}>
                                         <CardContent>
                                             <Typography variant="h5" component="div">{topic.account.name}</Typography>
-                                            <Typography variant="body2" color="text.secondary">{topic.account.commentCount} comments</Typography>
+                                            <Typography variant="h7" >{topic.account.commentCount} comments</Typography>
                                         </CardContent>
                                     </Card>
                                 </Grid>

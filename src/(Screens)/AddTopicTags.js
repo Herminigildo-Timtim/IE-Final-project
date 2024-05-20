@@ -28,7 +28,6 @@ const AddTopicTags = () => {
 
     const handleTagClick = (tag) => {
         setSelectedTag(tag);
-        console.log(selectedTag);
       };
     
       const handleCloseModal = () => {
@@ -68,6 +67,7 @@ const AddTopicTags = () => {
 
         console.log("Sorted Tag Counts:", tagCountsArray);
         setTopicTags(tagCountsArray);
+        console.log(topicTags);
     } catch (error) {
         console.error("Error fetching tags:", error);
     }
@@ -94,7 +94,7 @@ const AddTopicTags = () => {
                     </IconButton>
                 </Toolbar>
             </AppBar>
-            <Container sx={{ height: '77.1vh' }}>
+            <Container sx={{ height: 'auto', minHeight: '77.1vh' }}>
                 <Box mt={4}>
                     <Typography variant="h4" gutterBottom>
                         Topic Tags List
@@ -102,7 +102,7 @@ const AddTopicTags = () => {
                     <Grid container spacing={2}>
                         {topicTags.map((tag, index) => (
                             <Grid item key={index} xs={12} sm={6} md={3} onClick={() => handleTagClick(tag)}>
-                                <Card>
+                                <Card sx={{ '&:hover': { cursor: 'pointer', backgroundColor: 'black', color:'white', transform: 'scale(1.05)'} }}>
                                     <CardContent>
                                         <Typography variant="h6">{tag.tagName}</Typography>
                                         <Typography variant="h6">{tag.count} post</Typography>
@@ -126,7 +126,7 @@ const AddTopicTags = () => {
                     </Grid>
                 </Container>
             </footer>
-            {selectedTag && <ViewTagPostModal tagName={selectedTag.tagName} open={!!selectedTag} close={handleCloseModal} ids={selectedTag.ids}/>}
+            {selectedTag && <ViewTagPostModal tagName={selectedTag.tagName} open={!!selectedTag} close={handleCloseModal} pubKey={selectedTag.id}/>}
         </div>
     );
   };
