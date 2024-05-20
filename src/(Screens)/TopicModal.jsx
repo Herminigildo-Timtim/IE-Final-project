@@ -106,11 +106,11 @@ const TopicModal = ({ open, handleClose, topic, walletAddress }) => {
                 <Typography id="modal-description" sx={{ mt: 2 }}>
                     {topic ? `This topic has ${topic.account.commentCount} comment(s).` : 'No topic selected.'}
                 </Typography>
-                <div style={{overflowY: 'scroll', height: '333px'}}>
+                <div style={{overflow: 'auto', height: '333px', display: 'flex', flexDirection: 'column', alignItems: "center"}} >
                     {comments.map((comment) => (
-                        <Grid item xs={12} key={comment.publicKey.toString()}>
-                        <Card onClick={() => handleOpenModal(comment)}>
-                            <CardContent  sx={{ padding: '10px' }}>
+                        <Grid item xs={10} key={comment.publicKey.toString()} sx={{ width: '90%'}}>
+                        <Card onClick={() => handleOpenModal(comment)} sx={{ '&:hover': { cursor: 'pointer', backgroundColor: 'black', color:'white', transform: 'scale(1.05)'} }}>
+                            <CardContent  sx={{ padding: '10px'}}>
                                 <Typography variant="h6" component="div">{comment.account.content}</Typography>
                             </CardContent>
                         </Card>
