@@ -11,6 +11,7 @@ import {
   clusterApiUrl,
 } from "@solana/web3.js";
 import { Program, AnchorProvider, web3 } from "@project-serum/anchor";
+import { useNavigate } from "react-router-dom";
 
 window.Buffer = Buffer;
 const network = clusterApiUrl("devnet");
@@ -25,6 +26,8 @@ function Home({ walletAddress }) {
   const [topComments, setTopComments] = useState([]);
   const [trendingTags, setTrendingTags] = useState([]);
   const [isOpenPost, setIsOpenPost] = useState(false);
+
+  const navigate = useNavigate();
 
   const opts = {
     preflightCommitment: "processed",
@@ -91,6 +94,10 @@ function Home({ walletAddress }) {
     setIsOpenPost(false);
   };
 
+  const goTop = () => {
+    navigate("/topTopics", { state: { walletAddress } });
+  };
+
   useEffect(() => {
     postList();
     fetchTags();
@@ -110,7 +117,7 @@ function Home({ walletAddress }) {
                 <a href="#new">New Topic</a>
               </li>
               <li>
-                <a href="#hot">Hot Picks</a>
+                <button onClick={goTop}>Hot Picks</button>
               </li>
               <li>
                 <a href="#trending">Trending Tags</a>
