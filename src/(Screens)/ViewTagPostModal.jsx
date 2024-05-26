@@ -25,7 +25,7 @@ const PROGRAM_ID = new PublicKey(idl.metadata.address);
 const network = "https://api.devnet.solana.com";
 const opts = { preflightCommitment: "processed" };
 
-const ViewTagPostModal = ({ open, close, tagName, pubKey }) => {
+const ViewTagPostModal = ({ open, close, tag }) => {
     const [posts, setPosts] = useState([]);
     const [selectedPost, setSelectedPost] = useState([]);
     const [openModal, setOpenModal] = useState(false);
@@ -86,11 +86,10 @@ const ViewTagPostModal = ({ open, close, tagName, pubKey }) => {
     };
 
     useEffect(() => {
-        if (tagName) {
-            fetchPostsByTagName(tagName);
-            console.log(posts);
+        if (tag) {
+            fetchPostsByTagName(tag.tagName);
         }
-    }, [tagName]);
+    }, [tag]);
 
     return (
         <Modal
@@ -100,15 +99,15 @@ const ViewTagPostModal = ({ open, close, tagName, pubKey }) => {
             aria-describedby="modal-description"
         ><>
             <Box sx={style}>
-                <Typography id="modal-title" variant="h6" component="h2">
-                    {tagName}
+                <Typography id="modal-title" variant="h4" component="h2">
+                    {tag.tagName}
                 </Typography>
                 <Typography id="modal-title" variant="h6" component="h2">
-                    {pubKey}
+                   Tag Public Key: {tag.pubKey}
                 </Typography>
-                <div style={{overflow: 'auto', height: '333px', display: 'flex', flexDirection: 'column', alignItems: "center"}} >
+                <div style={{overflow: 'auto', height: '333px', display: 'flex', flexDirection: 'column', alignItems: "center", marginTop: "10px"}} >
                     {posts.map((post) => (
-                        <Grid item xs={12} key={post.publicKey.toString()} sx={{ width: '90%'}}>
+                        <Grid item xs={12} key={post.publicKey.toString()} sx={{ width: '90%', marginBottom: '5px'}}>
                         <Card onClick={() => handleOpenModal(post)} sx={{ '&:hover': { cursor: 'pointer', backgroundColor: 'black', color:'white', transform: 'scale(1.05)'} }}>
                             <CardContent  sx={{ padding: '10px'}}>
                                 <Typography variant="h6" component="div">{post.account.name}</Typography>
@@ -117,7 +116,7 @@ const ViewTagPostModal = ({ open, close, tagName, pubKey }) => {
                     </Grid>
                     ))}
                 </div>
-                <Button onClick={close} variant="contained" color="primary" sx={{ mt: 2 }}>
+                <Button onClick={close} variant="contained" color="primary" sx={{ mt: 2 , marginRight: '10px', backgroundColor: 'black', '&:hover': { cursor: 'pointer', backgroundColor: 'white', color:'black', transform: 'scale(1.05)'}}}>
                     Close
                 </Button>
             </Box>

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Button, Typography, Modal, TextField, Box } from "@mui/material";
-import { toast } from "react-toastify";
 import { web3 } from '@project-serum/anchor';
 import { SystemProgram, PublicKey } from "@solana/web3.js";
-import { fetchComments } from "../TopicModal";
 import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 function CommentModal({ open, onClose, selectedPostKey, getProvider, createCustomProgram, setSelectedPostComment, walletAddress, publicKey, comments }) {
     const [commentInput, setCommentInput] = useState('');
@@ -37,6 +36,7 @@ function CommentModal({ open, onClose, selectedPostKey, getProvider, createCusto
     return (
         <Modal open={open} onClose={onClose}>
             <Box sx={style}>
+            <ToastContainer position="top-right" />
                 <Typography variant="h6">Comment</Typography>
                 <TextField
                     variant="filled"
@@ -48,7 +48,7 @@ function CommentModal({ open, onClose, selectedPostKey, getProvider, createCusto
                     margin="normal"
                 />
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <Button variant="contained" onClick={handleComment}>
+                    <Button variant="contained" onClick={handleComment} sx={{ mt: 2 , marginRight: '10px', backgroundColor: 'black', '&:hover': { cursor: 'pointer', backgroundColor: 'white', color:'black', transform: 'scale(1.05)'}}}>
                         Comment
                     </Button>
                 </div>
@@ -87,7 +87,7 @@ export const createComment = async (selectedPostKey, commentInput, getProvider, 
         },
         signers: [commentAccount],
       });
-  
+      toast.success("Comment Posted");
       console.log("Created a new CommentAccount w/ address:", commentAccount.publicKey.toString());
       setCommentInput("");
       setSelectedPostComment((prevComment) => prevComment + 1);

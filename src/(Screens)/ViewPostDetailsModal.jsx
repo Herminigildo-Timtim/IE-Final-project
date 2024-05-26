@@ -54,7 +54,7 @@ const ViewPostDetailsModal = ({ open, handleClose, postsDetails }) => {
                 <Typography id="modal-publickey" sx={{ mt: 1 }}>
                     Date: {formatDate(postsDetails?.account?.timestamp)}
                 </Typography>
-                <Button onClick={handleClose} variant="contained" color="primary" sx={{ mt: 2 }}>
+                <Button onClick={handleClose} variant="contained" color="primary" sx={{ mt: 2 , marginRight: '10px', backgroundColor: 'black', '&:hover': { cursor: 'pointer', backgroundColor: 'white', color:'black', transform: 'scale(1.05)'}}}>
                     Close
                 </Button>
             </Box>

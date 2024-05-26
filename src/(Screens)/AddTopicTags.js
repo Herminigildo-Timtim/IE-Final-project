@@ -47,12 +47,15 @@ const AddTopicTags = () => {
         fetchedTags.forEach(tag => {
             const tagName = tag.account.name;
             const tagId = tag.account.id.toString();
+            const tagPubKey = tag.publicKey.toString();
 
             if (!tagCounts[tagName]) {
                 tagCounts[tagName] = { count: 0, ids: '' };
             }
             tagCounts[tagName].count += 1;
             tagCounts[tagName].ids = tagId;
+            tagCounts[tagName].pubKey = tagPubKey;
+
         });
 
         // Convert the tagCounts object to an array of { tagName, count, ids } objects
@@ -60,6 +63,7 @@ const AddTopicTags = () => {
             tagName,
             count: tagCounts[tagName].count,
             id: tagCounts[tagName].ids,
+            pubKey: tagCounts[tagName].pubKey,
         }));
 
         // Sort the array by count in descending order
@@ -126,7 +130,7 @@ const AddTopicTags = () => {
                     </Grid>
                 </Container>
             </footer>
-            {selectedTag && <ViewTagPostModal tagName={selectedTag.tagName} open={!!selectedTag} close={handleCloseModal} pubKey={selectedTag.id}/>}
+            {selectedTag && <ViewTagPostModal tag={selectedTag} open={!!selectedTag} close={handleCloseModal}/>}
         </div>
     );
   };

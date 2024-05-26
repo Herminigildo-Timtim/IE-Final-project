@@ -5,7 +5,7 @@ import { Program, AnchorProvider} from '@project-serum/anchor';
 import idl from '../idl.json';
 import ViewCommentModal from './ViewCommentModal';
 import CommentModal from './Pop-Up Screens/commentmodal';
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from 'react-toastify';
 
 const style = {
     position: 'absolute',
@@ -37,7 +37,6 @@ export const fetchComments = async (postPublicKey, setComments) => {
 
         const filteredComments = fetchedComments.filter(comment => comment.account.id.equals(postPublicKey));
         setComments(filteredComments);
-        console.log(filteredComments);
     } catch (error) {
         console.error("Error fetching comments:", error);
     }
@@ -120,8 +119,8 @@ const TopicModal = ({ open, handleClose, topic, walletAddress }) => {
         try {
             const fetchedPosts = await program.account.postAccount.all();
             const matchingPost = fetchedPosts.filter(post => post.publicKey.toString() === postPublicKey);
-            setCommentCount(matchingPost[0].account.commentCount);
             
+            setCommentCount(matchingPost[0].account.commentCount);
         } catch (error) {
             console.error("Error fetching topics:", error);
         }
@@ -162,7 +161,7 @@ const TopicModal = ({ open, handleClose, topic, walletAddress }) => {
             onClose={handleClose}
             aria-labelledby="modal-title"
             aria-describedby="modal-description"
-        ><>
+        ><><ToastContainer position="top-right" />
             <Box sx={style}>
                 <Typography id="modal-title" variant="h4" component="h2">
                     {topic?.account?.name}
