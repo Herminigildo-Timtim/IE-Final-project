@@ -4,14 +4,15 @@ import logo from './../(Components)/images/logo.webp';
 import { PublicKey, Connection, clusterApiUrl } from "@solana/web3.js";
 import { Program, AnchorProvider } from '@project-serum/anchor';
 import idl from "../idl.json";
+import { useNavigate } from "react-router-dom";
 
 window.Buffer = Buffer;
 const network = clusterApiUrl('devnet');
 
-function Topvotedpost() {
+function Topvotedpost({ walletAddress }) {
   const PROGRAM_ID = new PublicKey(idl.metadata.address);
 
-  const [walletAddress, setWalletAddress] = useState(null);
+  // const [walletAddress, setWalletAddress] = useState(null);
   const [topVotes, setTopVotes] = useState([]);
   const [searchInput, setSearchInput] = useState('');
 
@@ -19,8 +20,9 @@ function Topvotedpost() {
     preflightCommitment: "processed"
   };
 
+  const navigate = useNavigate();
   useEffect(() => {
-    setWalletAddress("F4coyXgjxsQGp9M3ZFR71vV8YadsJaz1oSfp2qRgCkfg");
+    // setWalletAddress("F4coyXgjxsQGp9M3ZFR71vV8YadsJaz1oSfp2qRgCkfg");
   }, []);
 
   const createCustomProgram = async () => {
@@ -51,6 +53,21 @@ function Topvotedpost() {
     }
   };
 
+  const goTop = () => {
+    navigate("/topTopics", { state: { walletAddress } });
+  };
+
+  const goTopVote = () => {
+    navigate("/topVoted", { state: { walletAddress } });
+  };
+
+  const goHome = () => {
+    navigate("/home", { state: { walletAddress } });
+  };
+
+  const goTags = () => {
+    navigate("/addTags", { state: { walletAddress } });
+  };
   useEffect(() => {
     fetchTopVotes();
   }, []);
@@ -62,22 +79,22 @@ function Topvotedpost() {
 
   return (
     <div className="app">
-      <header className="header-header">
-        <div className="logo">
-          <img src={logo} className="header-logo" alt="logo" />
-          <span>BlokcNote</span>
-        </div>
-        <div className="navigation-bars"> 
-          <nav>
-            <ul>
-              <li><a href="#new">New Topic</a></li>
-              <li><a href="#hot">Hot Picks</a></li>
-              <li><a href="#trending">Trending Tags</a></li>
-              <li><a href="#top">Top Voted</a></li>
-            </ul>
-          </nav>
-        </div>
-      </header>
+      <header className="header-header" style={{marginBottom: 0}}>
+                <div className="logo">
+                    <img src={logo} className="header-logo" alt="logo" />
+                    <span>BlokcNote</span>
+                </div>
+                <div className="navigation-bars">
+                    <nav>
+                        <ul>
+                            <li><a onClick={goHome}>New Topic</a></li>
+                            <li><a onClick={goTop}> Top Topics</a></li>
+                            <li><a onClick={goTopVote}>Top Voted</a></li>
+                            <li><a onClick={goTags}>Trending Tags</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </header>
       <div className="header-title">
         <h1>Most Voted Post Ranking</h1>
         <input 

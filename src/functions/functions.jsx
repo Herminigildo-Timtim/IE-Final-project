@@ -2,7 +2,6 @@ import { Program, AnchorProvider, web3 } from '@project-serum/anchor';
 import { SystemProgram } from "@solana/web3.js";
 import { PublicKey, Connection, clusterApiUrl } from "@solana/web3.js";
 import * as Web3 from "@solana/web3.js"
-import { useState } from "react";
 
 export const connectWallet = async (setWalletAddress, fetchBalance, balance) => {
   const { solana } = window;
@@ -78,41 +77,6 @@ export const commentList = async (createCustomProgram) => {
     return [];
   }
 };
-
-// export const createComment = async (content, selectedPostKey, commentInput, getProvider, createCustomProgram, setCommentInput, updateBalance, postList, commentList, setSelectedPostComment) => {
-//   try {
-//     // Check if the content is empty or ""
-//     if (!content || content.trim() === "") {
-//       console.log("Content is empty. Comment not created.");
-//       return;
-//     }
-
-//     const provider = getProvider();
-//     const program = await createCustomProgram();
-
-//     const commentAccount = web3.Keypair.generate();
-
-//     await program.rpc.createComment(content, {
-//       accounts: {
-//         commentAccount: commentAccount.publicKey,
-//         postAccount: new PublicKey(selectedPostKey),
-//         authority: provider.wallet.publicKey,
-//         systemProgram: SystemProgram.programId,
-//         clock: web3.SYSVAR_CLOCK_PUBKEY,
-//       },
-//       signers: [commentAccount],
-//     });
-
-//     console.log("Created a new CommentAccount w/ address:", commentAccount.publicKey.toString());
-//     setCommentInput("");
-//     updateBalance();
-//     postList();
-//     commentList();
-//     setSelectedPostComment((prevComment) => prevComment + 1);
-//   } catch (error) {
-//     console.log("Error in creating Comment: ", error);
-//   }
-// };
 
 export const commentsList = async (selectedPostKey, getProvider, createCustomProgram, postList, commentList, setSelectedPostComment) => {
   try {

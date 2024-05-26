@@ -1,12 +1,12 @@
 import {useEffect, useState} from "react";
-import { AppBar, Toolbar, Typography, Container, Grid, Card, CardContent, IconButton, Button } from '@mui/material';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import { Typography, Container, Grid, Card, CardContent} from '@mui/material';
 import TopicModal from './TopicModal';
 import { PublicKey, Connection } from "@solana/web3.js";
 import { Program, AnchorProvider } from '@project-serum/anchor';
 import idl from '../idl.json';
 import { Buffer } from "buffer";
-import { fetchBalance } from "../functions/functions";
+import { useNavigate } from "react-router-dom";
+import logo from "./../(Components)/images/logo.webp";
 
 window.Buffer = Buffer;
 const programID = new PublicKey(idl.metadata.address);
@@ -40,14 +40,14 @@ const fetchTopVote = async (setTopVote) => {
     }
 };
 
-const MostCommentedTopics = ({ walletAddress, balance}) => {
+function MostCommentedTopics ({ walletAddress}){
     const [footer] = useState(['About Us', 'Terms of Service', 'Privacy Policy', 'Contact Us']);
     const [nav] = useState(['New Topic', 'Hot Picks', 'Trending Tags', 'Top Voted']);
     const [topic, setTopic] = useState([]);
     const [topVote, setTopVote] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [selectedTopic, setSelectedTopic] = useState(null);
-
+    const navigate = useNavigate();
     
     useEffect(() => {
         fetchTopics(setTopic);
@@ -65,26 +65,40 @@ const MostCommentedTopics = ({ walletAddress, balance}) => {
         fetchTopics(setTopic);
     };
 
+    const goTop = () => {
+        navigate("/topTopics", { state: { walletAddress } });
+      };
+    
+      const goTopVote = () => {
+        navigate("/topVoted", { state: { walletAddress } });
+      };
+    
+      const goHome = () => {
+        navigate("/home", { state: { walletAddress } });
+      };
+    
+      const goTags = () => {
+        navigate("/addTags", { state: { walletAddress } });
+      };
+
     return (
         <div>
-            <AppBar position="static" style={{backgroundColor: 'white', color: 'black'}}>
-                <Toolbar>
-                    <IconButton edge="start" color="inherit" aria-label="menu">
-                    <svg className="logoIcon" viewBox="0 0 512 512" width="40" height="40">
-                        <path d="M234.5 5.709C248.4 .7377 263.6 .7377 277.5 5.709L469.5 74.28C494.1 83.38 512 107.5 512 134.6V377.4C512 404.5 494.1 428.6 469.5 437.7L277.5 506.3C263.6 511.3 248.4 511.3 234.5 506.3L42.47 437.7C17 428.6 0 404.5 0 377.4V134.6C0 107.5 17 83.38 42.47 74.28L234.5 5.709zM256 65.98L82.34 128L256 190L429.7 128L256 65.98zM288 434.6L448 377.4V189.4L288 246.6V434.6z"></path>
-                    </svg>
-                    </IconButton>
-                    <Typography variant="h6" style={{ flexGrow: 1 , fontWeight: '800'}}>
-                        blockNote
-                    </Typography>
-                    {nav.map((topic, index) => (
-                        <Button key={index} color="inherit">{topic}</Button>
-                    ))}
-                    <IconButton color="inherit">
-                        <AccountCircle />
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
+            <header className="header-header" style={{marginBottom: 0}}>
+                <div className="logo">
+                    <img src={logo} className="header-logo" alt="logo" />
+                    <span>BlokcNote</span>
+                </div>
+                <div className="navigation-bars">
+                    <nav>
+                        <ul>
+                            <li><a onClick={goHome}>New Topic</a></li>
+                            <li><a onClick={goTop}> Top Topics</a></li>
+                            <li><a onClick={goTopVote}>Top Voted</a></li>
+                            <li><a onClick={goTags}>Trending Tags</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </header>
 
             <Container sx={{  height: 'auto', minHeight: '80.3vh', overflow: 'auto', marginTop: '20px', paddingBottom: '20px', scrollbarWidth: 'none', }}>
                 <Grid container spacing={3} justifyContent="center" >
@@ -130,7 +144,7 @@ const MostCommentedTopics = ({ walletAddress, balance}) => {
                 </Container>
             </footer>
 
-            <TopicModal open={openModal} handleClose={handleCloseModal} topic={selectedTopic} walletAddress={walletAddress} setBalance={balance} fetchBalance={fetchBalance} />
+            <TopicModal open={openModal} handleClose={handleCloseModal} topic={selectedTopic} walletAddress={walletAddress}/>
         </div>
     );
 };

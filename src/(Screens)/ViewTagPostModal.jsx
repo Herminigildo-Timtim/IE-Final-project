@@ -25,21 +25,14 @@ const PROGRAM_ID = new PublicKey(idl.metadata.address);
 const network = "https://api.devnet.solana.com";
 const opts = { preflightCommitment: "processed" };
 
+const connection = new Connection(network, opts.preflightCommitment);
+const provider = new AnchorProvider(connection, window.solana, opts);
+const program = new Program(idl, PROGRAM_ID, provider);
+
 const ViewTagPostModal = ({ open, close, tag }) => {
     const [posts, setPosts] = useState([]);
     const [selectedPost, setSelectedPost] = useState([]);
     const [openModal, setOpenModal] = useState(false);
-
-    const formatDate = (time) => {
-        const timestamp = parseInt(time) * 1000;
-        const date = new Date(timestamp);
-
-        const formattedDate = date.toLocaleDateString('en-US');
-        const formattedTime = date.toLocaleTimeString('en-US');
-
-        const formattedDateTime = `${formattedDate} ${formattedTime}`;
-        return formattedDateTime.toLocaleString();
-    };
 
     const handleOpenModal = (post) => {
         setSelectedPost(post);
@@ -53,15 +46,11 @@ const ViewTagPostModal = ({ open, close, tag }) => {
     };
 
     const fetchPostsByTagName = async (tagName) => {
-        const connection = new Connection(network, opts.preflightCommitment);
-        const provider = new AnchorProvider(connection, window.solana, opts);
-        const program = new Program(idl, PROGRAM_ID, provider);
-
         try {
             const fetchedPosts = await program.account.addTagAccount.all();
             const matchingPosts = fetchedPosts.filter(post => post.account.name === tagName);
             const postId = matchingPosts.map(post => post.account.id.toString());
-            console.log(postId)
+
             fetchPostsByIds(postId);
         } catch (error) {
             console.error("Error fetching posts:", error);
@@ -70,10 +59,6 @@ const ViewTagPostModal = ({ open, close, tag }) => {
     };
 
     const fetchPostsByIds = async (postIds) => {
-        const connection = new Connection(network, opts.preflightCommitment);
-        const provider = new AnchorProvider(connection, window.solana, opts);
-        const program = new Program(idl, PROGRAM_ID, provider);
-
         try {
             const fetchedPosts = await program.account.postAccount.all();
             const filteredPosts = fetchedPosts.filter(post => postIds.includes(post.publicKey.toString()));

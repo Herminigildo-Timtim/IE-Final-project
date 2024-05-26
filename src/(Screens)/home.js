@@ -108,6 +108,10 @@ function Home({ walletAddress }) {
     navigate("/home", { state: { walletAddress } });
   };
 
+  const goTags = () => {
+    navigate("/addTags", { state: { walletAddress } });
+  };
+  
   useEffect(() => {
     postList();
     fetchTags();
@@ -133,6 +137,7 @@ function Home({ walletAddress }) {
                 <li>
                   <a onClick={goTopVote}>Top Voted</a>
                 </li>
+                <li><a onClick={goTags}>Trending Tags</a></li>
               </ul>
             </nav>
           </div>
