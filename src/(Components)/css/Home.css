@@ -152,8 +152,9 @@
   font-weight: 900;
   line-height: 1.5;
   margin: 0;
-  /* -webkit-mask-image: -webkit-radial-gradient(#000, #fff); */
+  -webkit-mask-image: -webkit-radial-gradient(#000, #fff);
   padding: 0;
+  /* position: absolute; */
 }
 
 .btn-31:disabled {
@@ -271,9 +272,4 @@
 /* Adjust the button within its container */
 .button-container .btn-31 {
   margin-right: 0; /* Remove any right margin */
-}
-.main .btn-31 {
-  position: absolute;
-  top: 130px;
-  right: 130px;
 }

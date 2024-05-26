@@ -143,18 +143,7 @@ function Home({ walletAddress }) {
           </div>
         </header>
         <div className="main">
-          <div>
-            <button className="btn-31" onClick={newPost}>
-              <span className="text-container">
-                <span
-                  className="text"
-                  style={{ color: "white", fontFamily: "sans-serif" }}
-                >
-                  New Post
-                </span>
-              </span>
-            </button>
-          </div>
+          
           {isOpenPost && (
             <NewTopicModal
               open={isOpenPost}
@@ -164,7 +153,21 @@ function Home({ walletAddress }) {
             />
           )}
           <div className="new-topic">
-            <h1>New Topic</h1>
+            <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+              <div style={{width: '70%'}}> <h1>New Topic</h1> </div>
+              <div style={{width: '30%', alignSelf: 'center', paddingLeft: '100px'}}>
+              <button className="btn-31" onClick={newPost}>
+                <span className="text-container">
+                  <span
+                    className="text"
+                    style={{ color: "white", fontFamily: "sans-serif" }}
+                  >
+                    New Post
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
             {posts.length > 0 && (
               <Card
                 className="contained"
@@ -196,7 +199,7 @@ function Home({ walletAddress }) {
           </div>
 
           <div className="hot-picks">
-            <h1>Hot picks</h1>
+            <h1>Hot Picks</h1>
             {topComments.length > 0 && (
               <Card
                 className="contained"
