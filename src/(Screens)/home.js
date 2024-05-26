@@ -4,6 +4,7 @@ import logo from "./../(Components)/images/logo.webp";
 import idl from "../idl.json";
 import { Buffer } from "buffer";
 import NewTopicModal from "./Pop-Up Screens/newtopicmodal.jsx";
+import { Card } from "@mui/material";
 import {
   PublicKey,
   SystemProgram,
@@ -12,6 +13,7 @@ import {
 } from "@solana/web3.js";
 import { Program, AnchorProvider, web3 } from "@project-serum/anchor";
 import { useNavigate } from "react-router-dom";
+import TopicModal from "./TopicModal.jsx";
 
 window.Buffer = Buffer;
 const network = clusterApiUrl("devnet");
@@ -98,150 +100,181 @@ function Home({ walletAddress }) {
     navigate("/topTopics", { state: { walletAddress } });
   };
 
+  const goTopVote = () => {
+    navigate("/topVoted", { state: { walletAddress } });
+  };
+
+  const goHome = () => {
+    navigate("/home", { state: { walletAddress } });
+  };
+
   useEffect(() => {
     postList();
     fetchTags();
   }, []);
 
   return (
-    <div className="app">
-      <header className="header-header">
-        <div className="logo">
-          <img src={logo} className="header-logo" alt="logo" />
-          <span>BlokcNote</span>
+    <>
+      <div className="app">
+        <header className="header-header">
+          <div className="logo">
+            <img src={logo} className="header-logo" alt="logo" />
+            <span>BlokcNote</span>
+          </div>
+          <div className="navigation-bars">
+            <nav>
+              <ul>
+                <li>
+                  <a onClick={goHome}>New Topic</a>
+                </li>
+                <li>
+                  <a onClick={goTop}> Top Topics</a>
+                </li>
+                <li>
+                  <a onClick={goTopVote}>Top Voted</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </header>
+        <div className="main">
+          <div>
+            <button className="btn-31" onClick={newPost}>
+              <span className="text-container">
+                <span
+                  className="text"
+                  style={{ color: "white", fontFamily: "sans-serif" }}
+                >
+                  New Post
+                </span>
+              </span>
+            </button>
+          </div>
+          {isOpenPost && (
+            <NewTopicModal
+              open={isOpenPost}
+              onClose={handleCloseModal}
+              getProvider={getProvider}
+              createCustomProgram={createCustomProgram}
+            />
+          )}
+          <div className="new-topic">
+            <h1>New Topic</h1>
+            {posts.length > 0 && (
+              <Card
+                className="contained"
+                variant="outline"
+                style={{
+                  flexDirection: "row",
+                  margin: "0%",
+                  marginBottom: "0%",
+                }}
+              >
+                {posts.map((post, index) => (
+                  <div
+                    key={index}
+                    className="cardcont"
+                    style={{ display: "block", overflowY: "visible" }}
+                  >
+                    <h3>{post.account.name}</h3>
+                    <p>Vote Count: {post.account.voteCount}</p>
+                    <p>Comment Count: {post.account.commentCount}</p>
+                    <p>From: {post.account.authority.toString()}</p>
+                    <p>
+                      Timestamp:{" "}
+                      {new Date(post.account.timestamp * 1000).toLocaleString()}
+                    </p>
+                  </div>
+                ))}
+              </Card>
+            )}
+          </div>
+
+          <div className="hot-picks">
+            <h1>Hot picks</h1>
+            {topComments.length > 0 && (
+              <Card
+                className="contained"
+                variant="outline"
+                style={{ flexDirection: "row", margin: "0%" }}
+              >
+                {topComments.slice(0, 10).map((post, index) => (
+                  <div
+                    key={index}
+                    className="cardcont"
+                    style={{ display: "block", overflowY: "visible" }}
+                  >
+                    <h3>{post.account.name}</h3>
+                    <p>Comment Count: {post.account.commentCount}</p>
+                    <p>From: {post.account.authority.toString()}</p>
+                    <p>
+                      Timestamp:{" "}
+                      {new Date(post.account.timestamp * 1000).toLocaleString()}
+                    </p>
+                    {isOpenPost && <TopicModal walletAddress={walletAddress} />}
+                  </div>
+                ))}
+              </Card>
+            )}
+          </div>
+
+          <div className="trending-tags">
+            <h1>Trending Tags</h1>
+            {trendingTags.length > 0 && (
+              <div className="contained">
+                {trendingTags.map((tag, index) => (
+                  <Card
+                    key={index}
+                    className="cardcont"
+                    style={{ minHeight: "62.23px" }}
+                  >
+                    <h3>{tag}</h3>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="top-voted">
+            {topVotes.length > 0 && (
+              <div className="contained">
+                <h1>Top voted</h1>
+                {topVotes.map((post, index) => (
+                  <div key={index} className="cardcont">
+                    <h3>{post.account.name}</h3>
+                    <p>Vote Count: {post.account.voteCount}</p>
+                    <p>Comment Count: {post.account.commentCount}</p>
+                    <p>From: {post.account.authority.toString()}</p>
+                    <p>
+                      Timestamp:{" "}
+                      {new Date(post.account.timestamp * 1000).toLocaleString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-        <div className="navigation-bars">
+        <footer className="footer-footer">
           <nav>
             <ul>
               <li>
-                <a href="#new">New Topic</a>
+                <a href="#new">About Us</a>
               </li>
               <li>
-                <button onClick={goTop}>Hot Picks</button>
+                <a href="#hot">Terms of Service</a>
               </li>
               <li>
-                <a href="#trending">Trending Tags</a>
+                <a href="#trending">Privacy Policy</a>
               </li>
               <li>
-                <a href="#top">Top Voted</a>
+                <a href="#top">Contact Us</a>
               </li>
             </ul>
           </nav>
-        </div>
-      </header>
-      <div className="main">
-        <button className="btn-31" onClick={newPost}>
-          <span className="text-container">
-            <span
-              className="text"
-              style={{ color: "white", fontFamily: "sans-serif" }}
-            >
-              New Post
-            </span>
-          </span>
-        </button>
-        {isOpenPost && (
-          <NewTopicModal
-            open={isOpenPost}
-            onClose={handleCloseModal}
-            getProvider={getProvider}
-            createCustomProgram={createCustomProgram}
-          />
-        )}
-        <div className="new-topic">
-          <h1>New Topic</h1>
-          {posts.length > 0 && (
-            <div className="contained">
-              {posts.map((post, index) => (
-                <div key={index} className="cardcont">
-                  <h3>{post.account.name}</h3>
-                  <p>Vote Count: {post.account.voteCount}</p>
-                  <p>Comment Count: {post.account.commentCount}</p>
-                  <p>From: {walletAddress}</p>
-                  <p>
-                    Timestamp:{" "}
-                    {new Date(post.account.timestamp * 1000).toLocaleString()}
-                  </p>
-                  {/* Additional content rendering if needed */}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="hot-picks">
-          <h1>Hot picks</h1>
-          {topComments.length > 0 && (
-            <div className="contained">
-              {topComments.slice(0, 10).map((post, index) => (
-                <div key={index} className="cardcont">
-                  <h3>{post.account.name}</h3>
-                  <p>Comment Count: {post.account.commentCount}</p>
-                  <p>From: {walletAddress}</p>
-                  <p>
-                    Timestamp:{" "}
-                    {new Date(post.account.timestamp * 1000).toLocaleString()}
-                  </p>
-                  {/* Additional content rendering if needed */}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="trending-tags">
-          <h1>Trending Tags</h1>
-          {trendingTags.length > 0 && (
-            <div className="contained">
-              {trendingTags.map((tag, index) => (
-                <div key={index} className="cardcont">
-                  <h3>{tag}</h3>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="top-voted">
-          <h1>Top voted</h1>
-          {topVotes.length > 0 && (
-            <div className="contained">
-              {topVotes.map((post, index) => (
-                <div key={index} className="cardcont">
-                  <h3>{post.account.name}</h3>
-                  <p>Vote Count: {post.account.voteCount}</p>
-                  <p>Comment Count: {post.account.commentCount}</p>
-                  <p>From: {walletAddress}</p>
-                  <p>
-                    Timestamp:{" "}
-                    {new Date(post.account.timestamp * 1000).toLocaleString()}
-                  </p>
-                  {/* Additional content rendering if needed */}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        </footer>
       </div>
-      <footer className="footer-footer">
-        <nav>
-          <ul>
-            <li>
-              <a href="#new">About Us</a>
-            </li>
-            <li>
-              <a href="#hot">Terms of Service</a>
-            </li>
-            <li>
-              <a href="#trending">Privacy Policy</a>
-            </li>
-            <li>
-              <a href="#top">Contact Us</a>
-            </li>
-          </ul>
-        </nav>
-      </footer>
-    </div>
+    </>
   );
 }
 
