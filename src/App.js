@@ -1,7 +1,7 @@
-import logo from './logo.svg';
-import './App.css';
-import './AddTopicMostComment.css';
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import logo from "./logo.svg";
+import "./App.css";
+import "./AddTopicMostComment.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MostCommentedTopics from "./(Screens)/MostCommentedTopics";
 import AddTopicTags from "./(Screens)/AddTopicTags";
 import LandingPage from './(Screens)/landingpage';

@@ -1,7 +1,7 @@
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Set minimum height of the app to 100% of viewport height */
+  height: 100vh;
 }
 
 .header-logo {
@@ -70,13 +70,13 @@
   padding: 20px;
   color: black;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-  margin-top: 20px; /* Push footer to the bottom */
+  margin: 0px;
 }
 
 .footer-footer nav ul {
   list-style-type: none;
   padding: 0;
-  margin: 0; /* Remove the default margin */
+  margin-top: 15px;
   display: flex;
   justify-content: center;
 }
@@ -105,15 +105,16 @@
 
 .cardcont {
   background-color: white;
-  width: 400px; /* Adjust the width of the card */
-  margin-right: 20px; /* Adjust spacing between cards */
-  height: 200px;
+  width: 450px; /* Adjust the width of the card */
+  margin-right: 30px; /* Adjust spacing between cards */
+  height:fit-content;
+  padding-left: 20px;
   border-radius: 20px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   flex-shrink: 0; /* Prevent cards from shrinking */
 }
 
-.container:hover .cardcont {
+.contained:hover .cardcont {
   animation: scrollCards 4s linear infinite;
 }
 
