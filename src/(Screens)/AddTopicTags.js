@@ -7,7 +7,7 @@ import { PublicKey, Connection, clusterApiUrl} from "@solana/web3.js";
 import { Program, AnchorProvider } from '@project-serum/anchor';
 import ViewTagPostModal from './ViewTagPostModal';
 import { useNavigate } from "react-router-dom";
-import logo from "./../(Components)/images/logo.webp";
+import Navbar from "./NavBar.js";
 
 window.Buffer = Buffer;
 const PROGRAM_ID = new PublicKey(idl.metadata.address);
@@ -93,22 +93,7 @@ function AddTopicTags({ walletAddress }){
     };
     return(
         <div>
-            <header className="header-header">
-                <div className="logo">
-                    <img src={logo} className="header-logo" alt="logo" />
-                    <span>BlokcNote</span>
-                </div>
-                <div className="navigation-bars">
-                    <nav>
-                        <ul>
-                            <li><a onClick={goHome}>New Topic</a></li>
-                            <li><a onClick={goTop}> Top Topics</a></li>
-                            <li><a onClick={goTopVote}>Top Voted</a></li>
-                            <li><a onClick={goTags}>Trending Tags</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </header>
+            <Navbar goHome={goHome} goTop={goTop} goTopVote={goTopVote} goTags={goTags}/>
             <Container sx={{ height: 'auto', minHeight: '77.1vh' }}>
                 <Box mt={4}>
                     <Typography variant="h4" gutterBottom>

@@ -6,7 +6,7 @@ import { Program, AnchorProvider } from '@project-serum/anchor';
 import idl from '../idl.json';
 import { Buffer } from "buffer";
 import { useNavigate } from "react-router-dom";
-import logo from "./../(Components)/images/logo.webp";
+import Navbar from "./NavBar.js";
 
 window.Buffer = Buffer;
 const programID = new PublicKey(idl.metadata.address);
@@ -83,23 +83,7 @@ function MostCommentedTopics ({ walletAddress}){
 
     return (
         <div>
-            <header className="header-header" style={{marginBottom: 0}}>
-                <div className="logo">
-                    <img src={logo} className="header-logo" alt="logo" />
-                    <span>BlokcNote</span>
-                </div>
-                <div className="navigation-bars">
-                    <nav>
-                        <ul>
-                            <li><a onClick={goHome}>New Topic</a></li>
-                            <li><a onClick={goTop}> Top Topics</a></li>
-                            <li><a onClick={goTopVote}>Top Voted</a></li>
-                            <li><a onClick={goTags}>Trending Tags</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </header>
-
+            <Navbar goHome={goHome} goTop={goTop} goTopVote={goTopVote} goTags={goTags}/>
             <Container sx={{  height: 'auto', minHeight: '80.3vh', overflow: 'auto', marginTop: '20px', paddingBottom: '20px', scrollbarWidth: 'none', }}>
                 <Grid container spacing={3} justifyContent="center" >
                     <Grid item xs={12} md={8} sx={{border: '1px solid #ccc', borderRadius: '8px', padding: '20px', marginTop:'30px'}}>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import './../(Components)/css/TopVotedPost.css'; // Import your CSS file for styling
-import logo from './../(Components)/images/logo.webp';
+import './../(Components)/css/TopVotedPost.css'; 
 import { PublicKey, Connection, clusterApiUrl } from "@solana/web3.js";
 import { Program, AnchorProvider } from '@project-serum/anchor';
 import idl from "../idl.json";
 import { useNavigate } from "react-router-dom";
+import Navbar from "./NavBar.js";
 
 window.Buffer = Buffer;
 const network = clusterApiUrl('devnet');
@@ -93,22 +93,7 @@ function Topvotedpost({ walletAddress }) {
 
   return (
     <div className="app">
-      <header className="header-header" style={{marginBottom: 0}}>
-                <div className="logo">
-                    <img src={logo} className="header-logo" alt="logo" />
-                    <span>BlokcNote</span>
-                </div>
-                <div className="navigation-bars">
-                    <nav>
-                        <ul>
-                            <li><a onClick={goHome}>New Topic</a></li>
-                            <li><a onClick={goTop}> Top Topics</a></li>
-                            <li><a onClick={goTopVote}>Top Voted</a></li>
-                            <li><a onClick={goTags}>Trending Tags</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </header>
+      <Navbar goHome={goHome} goTop={goTop} goTopVote={goTopVote} goTags={goTags}/>
       <div className="header-title">
         <h1>Most Voted Post Ranking</h1>
         <input 

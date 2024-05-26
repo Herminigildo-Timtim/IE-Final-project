@@ -181,3 +181,4 @@ export const handleCommentInputChange = (e, setCommentInput) => {
 export const handleTopicInputChange = (e, setTopicInput) => {
   setTopicInput(e.target.value);
 };
+

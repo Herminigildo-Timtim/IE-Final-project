@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./../(Components)/css/Home.css"; // Import your CSS file for styling
-import logo from "./../(Components)/images/logo.webp";
 import idl from "../idl.json";
 import { Buffer } from "buffer";
 import NewTopicModal from "./Pop-Up Screens/newtopicmodal.jsx";
@@ -14,6 +13,7 @@ import {
 import { Program, AnchorProvider, web3 } from "@project-serum/anchor";
 import { useNavigate } from "react-router-dom";
 import TopicModal from "./TopicModal.jsx";
+import Navbar from "./NavBar.js";
 
 window.Buffer = Buffer;
 const network = clusterApiUrl("devnet");
@@ -120,30 +120,8 @@ function Home({ walletAddress }) {
   return (
     <>
       <div className="app">
-        <header className="header-header">
-          <div className="logo">
-            <img src={logo} className="header-logo" alt="logo" />
-            <span>BlokcNote</span>
-          </div>
-          <div className="navigation-bars">
-            <nav>
-              <ul>
-                <li>
-                  <a onClick={goHome}>New Topic</a>
-                </li>
-                <li>
-                  <a onClick={goTop}> Top Topics</a>
-                </li>
-                <li>
-                  <a onClick={goTopVote}>Top Voted</a>
-                </li>
-                <li><a onClick={goTags}>Trending Tags</a></li>
-              </ul>
-            </nav>
-          </div>
-        </header>
+      <Navbar goHome={goHome} goTop={goTop} goTopVote={goTopVote} goTags={goTags}/>
         <div className="main">
-          
           {isOpenPost && (
             <NewTopicModal
               open={isOpenPost}

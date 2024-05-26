@@ -50,14 +50,15 @@
 
 .navigation-bars nav ul li a {
   text-decoration: none;
+  cursor: pointer;
   color: black;
 }
 
 /* Additional styling as needed */
 .main {
-  max-height: calc(97vh - 243px); /* Adjust the value as needed */
   overflow-y: auto;
-  padding: 50px; /* Enable vertical scrollbar when content overflows */
+  margin-top: 20px;
+  padding: 30px; /* Enable vertical scrollbar when content overflows */
 }
 
 .main::-webkit-scrollbar {
