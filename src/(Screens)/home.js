@@ -244,9 +244,10 @@ function Home({ walletAddress }) {
           </div>
 
           <div className="top-voted">
+          
+                <h1>Top voted</h1>
             {topVotes.length > 0 && (
               <div className="contained">
-                <h1>Top voted</h1>
                 {topVotes.map((post, index) => (
                   <div key={index} className="cardcont">
                     <h3>{post.account.name}</h3>
