@@ -13,7 +13,7 @@ const PROGRAM_ID = new PublicKey(idl.metadata.address);
 const network = "https://api.devnet.solana.com";
 
 const AddTopicTags = () => {
-    const [footer] = useState(['About Us', 'Terns of Service', 'Privacy Policy', 'Contact Us']);
+    const [footer] = useState(['About Us', 'Terms of Service', 'Privacy Policy', 'Contact Us']);
     const [nav] = useState(['New Topic', 'Hot Picks', 'Trending Tags', 'Top Voted']);
     const [topicTags, setTopicTags] = useState([]);
     const [selectedTag, setSelectedTag] = useState(null);

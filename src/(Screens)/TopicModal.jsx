@@ -5,6 +5,7 @@ import { Program, AnchorProvider} from '@project-serum/anchor';
 import idl from '../idl.json';
 import ViewCommentModal from './ViewCommentModal';
 import CommentModal from './Pop-Up Screens/commentmodal';
+import { toast } from "react-toastify";
 
 const style = {
     position: 'absolute',
@@ -33,7 +34,7 @@ export const fetchComments = async (postPublicKey, setComments) => {
 
     try {
         const fetchedComments = await program.account.commentAccount.all();
-        // Filter comments where the postId matches the selected topic's publicKey
+
         const filteredComments = fetchedComments.filter(comment => comment.account.id.equals(postPublicKey));
         setComments(filteredComments);
         console.log(filteredComments);
@@ -52,6 +53,20 @@ const getProvider = () => {
     return provider;
 };
 
+export const connectWallet = async (setWalletAddress) => {
+    const { solana } = window;
+    try {
+      if (solana) {
+        const response = await solana.connect();
+        setWalletAddress(response.publicKey.toString());
+  
+        console.log("Address sa connect: " + response.publicKey.toString());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 const createCustomProgram = async () => {
     console.log("PROGRAM_ID:", PROGRAM_ID.toString());
     return new Program(idl, PROGRAM_ID, getProvider());
@@ -63,14 +78,64 @@ const TopicModal = ({ open, handleClose, topic, walletAddress }) => {
     const [openModal, setOpenModal] = useState(false);
     const [selectedComment, setSelectedComment] = useState(null);
     const [openCommentModal, setOpenCommentModal] = useState(false);
+    const [voteCount, setVoteCount] = useState(null);
+    const [commentCount, setCommentCount] = useState(null);
+    const [currentwalletAddress, setCurrentWalletAddress] = useState('');
 
+    const upvotePost = async () => {
+        try {
+            const provider = getProvider();
+            const program = await createCustomProgram();
+
+            await program.rpc.votePost({
+                accounts: {
+                    postAccount: new PublicKey(postPublicKey),
+                },
+                signers: [],
+            });
+            
+            toast.success("Post Up Voted Successfully!");
+            fetchTopic();
+            
+        } catch (error) {
+            toast.error("Unsuccessful upvote.");
+            console.error("Error in voting for the post: ", error);
+        }
+    };
+
+    const fetchTopic = async () => {
+        const program = await createCustomProgram();
+        try {
+            const fetchedPosts = await program.account.postAccount.all();
+            const matchingPost = fetchedPosts.filter(post => post.publicKey.toString() === postPublicKey);
+            setVoteCount(matchingPost[0].account.voteCount);
+
+        } catch (error) {
+            console.error("Error fetching topics:", error);
+        }
+    };
+
+    const updateCommentCount = async () => {
+        const program = await createCustomProgram();
+        try {
+            const fetchedPosts = await program.account.postAccount.all();
+            const matchingPost = fetchedPosts.filter(post => post.publicKey.toString() === postPublicKey);
+            setCommentCount(matchingPost[0].account.commentCount);
+            
+        } catch (error) {
+            console.error("Error fetching topics:", error);
+        }
+    };
     useEffect(() => {
         if (topic) {
             setPostPublicKey(topic.publicKey.toString());
             fetchComments(topic.publicKey, setComments);
+            setVoteCount(topic.account.voteCount);
+            setCommentCount(topic.account.commentCount);
+            connectWallet(setCurrentWalletAddress);
         }
     }, [topic]);
-
+    
     const handleOpenModal = (comment) => {
         setSelectedComment(comment);
         console.log(comments);
@@ -82,12 +147,14 @@ const TopicModal = ({ open, handleClose, topic, walletAddress }) => {
         setOpenCommentModal(false);
         setSelectedComment(null);
         fetchComments(topic.publicKey, setComments);
+        updateCommentCount();
     };
 
     const openComment = (comment) => {
         setOpenCommentModal(true);
         setSelectedComment(comment);
-    }
+    };
+
     return (
     <>
         <Modal
@@ -100,13 +167,19 @@ const TopicModal = ({ open, handleClose, topic, walletAddress }) => {
                 <Typography id="modal-title" variant="h4" component="h2">
                     {topic?.account?.name}
                 </Typography>
-                <Typography id="modal-publickey" sx={{ mt: 2 }}>
+                <Typography id="modal-publickey">
+                    Description: {topic?.account?.description}
+                </Typography>
+                <Typography id="modal-publickey" >
                     Post Public Key: {postPublicKey}
                 </Typography>
-                <Typography id="modal-description" sx={{ mt: 2 }}>
-                    {topic ? `This topic has ${topic.account.commentCount} comment(s).` : 'No topic selected.'}
+                <Typography id="modal-publickey">
+                    Vote Count: {voteCount}
                 </Typography>
-                <div style={{overflow: 'auto', height: '333px', display: 'flex', flexDirection: 'column', alignItems: "center"}} >
+                <Typography id="modal-description">
+                    {topic ? `This topic has ${commentCount} comment(s).` : 'No topic selected.'}
+                </Typography>
+                <div style={{overflow: 'auto', height: '300px', display: 'flex', flexDirection: 'column', alignItems: "center"}} >
                     {comments.map((comment) => (
                         <Grid item xs={10} key={comment.publicKey.toString()} sx={{ width: '90%'}}>
                         <Card onClick={() => handleOpenModal(comment)} sx={{ '&:hover': { cursor: 'pointer', backgroundColor: 'black', color:'white', transform: 'scale(1.05)'} }}>
@@ -117,12 +190,17 @@ const TopicModal = ({ open, handleClose, topic, walletAddress }) => {
                     </Grid>
                     ))}
                 </div>
-                <Button onClick={handleClose} variant="contained" color="primary" sx={{ mt: 2 }}>
+                <Box>
+                <Button onClick={handleClose} variant="contained"  sx={{ mt: 2 , marginRight: '10px', backgroundColor: 'black', '&:hover': { cursor: 'pointer', backgroundColor: 'white', color:'black', transform: 'scale(1.05)'}}}>
                     Close
                 </Button>
-                <Button onClick={openComment} variant="contained" color="primary" sx={{ mt: 2}}>
+                <Button onClick={openComment} variant="contained"  sx={{ mt: 2 , marginRight: '10px', backgroundColor: 'black', '&:hover': { cursor: 'pointer', backgroundColor: 'white', color:'black', transform: 'scale(1.05)'}}}>
                     Comment
                 </Button>
+                <Button onClick={upvotePost} variant="contained" sx={{ mt: 2, marginRight: '10px', backgroundColor: 'black', '&:hover': { cursor: 'pointer', backgroundColor: 'white', color:'black', transform: 'scale(1.05)'}}}>
+                    UpVote
+                </Button>
+                </Box>
             </Box>
             <ViewCommentModal open={openModal} handleClose={handleCloseModal} commentDetails={selectedComment} />
             </>
@@ -132,8 +210,9 @@ const TopicModal = ({ open, handleClose, topic, walletAddress }) => {
             onClose={handleCloseModal} 
             selectedPostKey={postPublicKey} 
             getProvider={getProvider} 
-            createCustomProgram={createCustomProgram} // Pass createCustomProgram here
+            createCustomProgram={createCustomProgram}
             setSelectedPostComment={setSelectedComment}
+            commentCount = {setCommentCount}
             walletAddress={walletAddress}
         />
     </>

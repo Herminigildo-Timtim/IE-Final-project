@@ -41,7 +41,7 @@ const fetchTopVote = async (setTopVote) => {
 };
 
 const MostCommentedTopics = ({ walletAddress, balance}) => {
-    const [footer] = useState(['About Us', 'Terns of Service', 'Privacy Policy', 'Contact Us']);
+    const [footer] = useState(['About Us', 'Terms of Service', 'Privacy Policy', 'Contact Us']);
     const [nav] = useState(['New Topic', 'Hot Picks', 'Trending Tags', 'Top Voted']);
     const [topic, setTopic] = useState([]);
     const [topVote, setTopVote] = useState([]);
@@ -62,6 +62,7 @@ const MostCommentedTopics = ({ walletAddress, balance}) => {
     const handleCloseModal = () => {
         setOpenModal(false);
         setSelectedTopic(null);
+        fetchTopics(setTopic);
     };
 
     return (

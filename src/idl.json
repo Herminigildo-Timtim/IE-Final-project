@@ -29,7 +29,10 @@
     },
     {
       "name": "votePost",
-      "accounts": [{ "name": "postAccount", "isMut": true, "isSigner": false }],
+      "accounts": [
+        { "name": "postAccount", "isMut": true, "isSigner": false }
+      ],
+      
       "args": []
     },
     {
@@ -85,6 +88,6 @@
     }
   ],
   "metadata": {
-    "address": "HFsjJrrAvbZ5R5m92ETLmk9ZBucV2nYv8kWRgYmTmK6o"
+    "address": "jManvecUwqb68PwDV6Ztpt5UEzkub2DCTHBLZN9Sxsb"
   }
 }

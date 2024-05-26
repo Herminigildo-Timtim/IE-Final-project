@@ -140,20 +140,19 @@ export const commentsList = async (selectedPostKey, getProvider, createCustomPro
   }
 };
 
-export const votePost = async (selectedPostKey, getProvider, createCustomProgram, commentList, postList, updateWalletAddress, updateBalance, setSelectedPostVote) => {
+export const votePost = async (selectedPostKey, getProvider, createCustomProgram, setSelectedPostVote) => {
   try {
+    const provider = getProvider();
     const program = await createCustomProgram();
+    const vote = web3.Keypair.generate();
     await program.rpc.votePost({
       accounts: {
         postAccount: new PublicKey(selectedPostKey),
-      },
-    });
 
+      },
+      signers: [vote],
+    });
     console.log("Voted for the post.");
-    commentList();
-    postList();
-    updateWalletAddress();
-    updateBalance();
     setSelectedPostVote((prevVote) => prevVote + 1);
   } catch (error) {
     console.log("Error in voting for the post: ", error);

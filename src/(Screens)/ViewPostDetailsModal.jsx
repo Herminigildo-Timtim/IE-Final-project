@@ -43,6 +43,9 @@ const ViewPostDetailsModal = ({ open, handleClose, postsDetails }) => {
                     <strong>{postsDetails?.account?.name?.toString()}</strong>
                 </Typography>
                 <Typography id="modal-publickey" sx={{ mt: 1 }}>
+                    Description: {postsDetails?.account?.description?.toString()}
+                </Typography>
+                <Typography id="modal-publickey" sx={{ mt: 1 }}>
                     Posted by: {postsDetails?.account?.authority?.toString()}
                 </Typography>
                 <Typography id="modal-publickey" sx={{ mt: 1 }}>
