@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Container, Box, Typography, Grid, Card, CardContent } from '@mui/material';
 import idl from '../idl.json';
 import { Buffer } from "buffer";
-import { PublicKey, Connection} from "@solana/web3.js";
+import { PublicKey, Connection, clusterApiUrl} from "@solana/web3.js";
 import { Program, AnchorProvider } from '@project-serum/anchor';
 import ViewTagPostModal from './ViewTagPostModal';
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import logo from "./../(Components)/images/logo.webp";
 
 window.Buffer = Buffer;
 const PROGRAM_ID = new PublicKey(idl.metadata.address);
-const network = "https://api.devnet.solana.com";
+const network = clusterApiUrl("devnet");
 
 
 function AddTopicTags({ walletAddress }){

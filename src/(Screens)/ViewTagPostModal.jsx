@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Box, Typography, Button, Grid, Card, CardContent} from '@mui/material';
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import { Program, AnchorProvider} from '@project-serum/anchor';
 import idl from '../idl.json';
 import ViewPostDetailsModal from './ViewPostDetailsModal';
@@ -22,7 +22,7 @@ const style = {
 };
 
 const PROGRAM_ID = new PublicKey(idl.metadata.address);
-const network = "https://api.devnet.solana.com";
+const network = clusterApiUrl('devnet');
 const opts = { preflightCommitment: "processed" };
 
 const connection = new Connection(network, opts.preflightCommitment);

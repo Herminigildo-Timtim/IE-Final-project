@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import { Typography, Container, Grid, Card, CardContent} from '@mui/material';
 import TopicModal from './TopicModal';
-import { PublicKey, Connection } from "@solana/web3.js";
+import { PublicKey, Connection, clusterApiUrl, } from "@solana/web3.js";
 import { Program, AnchorProvider } from '@project-serum/anchor';
 import idl from '../idl.json';
 import { Buffer } from "buffer";
@@ -10,7 +10,7 @@ import logo from "./../(Components)/images/logo.webp";
 
 window.Buffer = Buffer;
 const programID = new PublicKey(idl.metadata.address);
-const network = "https://api.devnet.solana.com";
+const network = clusterApiUrl('devnet');
 const opts = { preflightCommitment: "processed" };
 const connection = new Connection(network, opts.preflightCommitment);
 const provider = new AnchorProvider(connection, window.solana, opts);

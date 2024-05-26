@@ -8,6 +8,19 @@ import { useNavigate } from "react-router-dom";
 
 window.Buffer = Buffer;
 const network = clusterApiUrl('devnet');
+export const connectWallet = async (setWalletAddress) => {
+  const { solana } = window;
+  try {
+    if (solana) {
+      const response = await solana.connect();
+      setWalletAddress(response.publicKey.toString());
+
+      console.log("Address sa connect: " + response.publicKey.toString());
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 function Topvotedpost({ walletAddress }) {
   const PROGRAM_ID = new PublicKey(idl.metadata.address);
@@ -15,14 +28,14 @@ function Topvotedpost({ walletAddress }) {
   // const [walletAddress, setWalletAddress] = useState(null);
   const [topVotes, setTopVotes] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-
+  const [walAdd, setWalAdd] = useState('');
   const opts = {
     preflightCommitment: "processed"
   };
 
   const navigate = useNavigate();
   useEffect(() => {
-    // setWalletAddress("F4coyXgjxsQGp9M3ZFR71vV8YadsJaz1oSfp2qRgCkfg");
+    connectWallet(setWalAdd);
   }, []);
 
   const createCustomProgram = async () => {
@@ -68,6 +81,7 @@ function Topvotedpost({ walletAddress }) {
   const goTags = () => {
     navigate("/addTags", { state: { walletAddress } });
   };
+
   useEffect(() => {
     fetchTopVotes();
   }, []);
@@ -120,7 +134,7 @@ function Topvotedpost({ walletAddress }) {
                   <h2>{post.account.name}</h2>
                   <p>Vote Count: {post.account.voteCount}</p>
                   <p>Comment Count: {post.account.commentCount}</p>
-                  <p>From: {walletAddress}</p>
+                  <p>From: {walAdd}</p>
                   <p>Timestamp: {new Date(post.account.timestamp * 1000).toLocaleString()}</p>
                 </div>
               ))
