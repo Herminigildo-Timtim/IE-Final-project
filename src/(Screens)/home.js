@@ -211,7 +211,7 @@ const handleCloseTagClick = (tag) => {
                     key={index}
                     className="cardcont"
                     onClick={() => handleOpenModal(post)} 
-                    style={{ display: "block", overflowY: "visible" }}
+                    style={{ display: "block", overflowY: "visible", cursor: 'pointer' }}
                   >
                     <h3>{post.account.name}</h3>
                     <p>Vote Count: {post.account.voteCount}</p>
@@ -241,7 +241,7 @@ const handleCloseTagClick = (tag) => {
                     key={index}
                     className="cardcont"
                     onClick={() => handleOpenModal(post)} 
-                    style={{ display: "block", overflowY: "visible" }}
+                    style={{ display: "block", overflowY: "visible", cursor: 'pointer' }}
                   >
                     <h3>{post.account.name}</h3>
                     <p>Comment Count: {post.account.commentCount}</p>
