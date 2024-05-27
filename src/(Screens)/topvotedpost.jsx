@@ -5,7 +5,7 @@ import { Program, AnchorProvider } from '@project-serum/anchor';
 import idl from "../idl.json";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./NavBar.js";
-
+import TopicModal from "./TopicModal.jsx";
 window.Buffer = Buffer;
 const network = clusterApiUrl('devnet');
 export const connectWallet = async (setWalletAddress) => {
@@ -29,6 +29,9 @@ function Topvotedpost({ walletAddress }) {
   const [topVotes, setTopVotes] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [walAdd, setWalAdd] = useState('');
+  const [selectedTag, setSelectedTag] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState(null);
   const opts = {
     preflightCommitment: "processed"
   };
@@ -65,6 +68,16 @@ function Topvotedpost({ walletAddress }) {
       console.log("Error fetching top votes: ", error);
     }
   };
+
+  const handleOpenModal = (topic) => {
+    setSelectedTopic(topic);
+    setOpenModal(true);
+};
+
+const handleCloseTopicModal = () => {
+    setOpenModal(false);
+    setSelectedTopic(null);
+};
 
   const goTop = () => {
     navigate("/topTopics", { state: { walletAddress } });
@@ -108,14 +121,14 @@ function Topvotedpost({ walletAddress }) {
       </div>
       <div className="main">
         {/* Display top-voted posts */}
-        <div className="container-content">
+        <div className="container-content" style={{cursor: 'pointer'}}> 
           {topVotes.length === 0 ? (
             <p>No content available</p>
           ) : (
             topVotes
               .filter(post => post.account.name.toLowerCase().includes(searchInput.toLowerCase()))
               .map((post, index) => (
-                <div key={index} className="card-container">
+                <div key={index} className="card-container" onClick={() => handleOpenModal(post)} >
                   <h2>{post.account.name}</h2>
                   <p>Vote Count: {post.account.voteCount}</p>
                   <p>Comment Count: {post.account.commentCount}</p>
@@ -125,6 +138,7 @@ function Topvotedpost({ walletAddress }) {
               ))
           )}
         </div>
+        <TopicModal open={openModal} handleClose={handleCloseTopicModal} topic={selectedTopic} walletAddress={walletAddress}/>
       </div>
       <footer className='footer-footer'>
         <nav>
