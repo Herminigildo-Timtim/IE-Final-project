@@ -14,6 +14,7 @@ import { Program, AnchorProvider, web3 } from "@project-serum/anchor";
 import { useNavigate } from "react-router-dom";
 import TopicModal from "./TopicModal.jsx";
 import Navbar from "./NavBar.js";
+import { connectWallet } from "../functions/functions.jsx";
 
 window.Buffer = Buffer;
 const network = clusterApiUrl("devnet");
@@ -115,6 +116,7 @@ function Home({ walletAddress }) {
   useEffect(() => {
     postList();
     fetchTags();
+    connectWallet();
   }, []);
 
   return (

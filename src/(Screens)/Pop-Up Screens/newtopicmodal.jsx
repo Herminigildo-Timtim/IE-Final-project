@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { web3 } from "@project-serum/anchor";
 import { SystemProgram } from "@solana/web3.js";
 
+
 function NewTopicModal({ onClose, open, getProvider, createCustomProgram }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -20,6 +21,7 @@ function NewTopicModal({ onClose, open, getProvider, createCustomProgram }) {
       toast.error("Please fill out all fields!");
     } else {
       try {
+        console.log(getProvider);
         await createPost(
           getProvider,
           createCustomProgram,
@@ -44,8 +46,10 @@ function NewTopicModal({ onClose, open, getProvider, createCustomProgram }) {
     tags
   ) => {
     try {
+      
       const provider = getProvider();
       const program = await createCustomProgram();
+
       const postAccount = web3.Keypair.generate();
 
       await program.rpc.initPost(title, description, tags.join(","), {
@@ -74,7 +78,7 @@ function NewTopicModal({ onClose, open, getProvider, createCustomProgram }) {
       console.log("Error in creating PostAccount: ", error);
     }
   };
-
+  
   const addTag = async (provider, program, postAccount, tagName) => {
     try {
       console.log("Generating keypair for tag account...");

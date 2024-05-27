@@ -7,6 +7,7 @@ import idl from '../idl.json';
 import { Buffer } from "buffer";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./NavBar.js";
+import { connectWallet } from "../functions/functions.jsx";
 
 window.Buffer = Buffer;
 const programID = new PublicKey(idl.metadata.address);
@@ -52,6 +53,7 @@ function MostCommentedTopics ({ walletAddress}){
     useEffect(() => {
         fetchTopics(setTopic);
         fetchTopVote(setTopVote);
+        connectWallet();
     }, []);
 
     const handleOpenModal = (topic) => {

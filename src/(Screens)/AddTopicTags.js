@@ -8,11 +8,11 @@ import { Program, AnchorProvider } from '@project-serum/anchor';
 import ViewTagPostModal from './ViewTagPostModal';
 import { useNavigate } from "react-router-dom";
 import Navbar from "./NavBar.js";
+import { connectWallet } from "../functions/functions.jsx";
 
 window.Buffer = Buffer;
 const PROGRAM_ID = new PublicKey(idl.metadata.address);
 const network = clusterApiUrl("devnet");
-
 
 function AddTopicTags({ walletAddress }){
     const [footer] = useState(['About Us', 'Terms of Service', 'Privacy Policy', 'Contact Us']);
@@ -22,6 +22,7 @@ function AddTopicTags({ walletAddress }){
     const navigate = useNavigate();
     useEffect(() => {
         fetchTags();
+        connectWallet();
       }, []);
 
     const opts = {

@@ -3,18 +3,13 @@ import { SystemProgram } from "@solana/web3.js";
 import { PublicKey, Connection, clusterApiUrl } from "@solana/web3.js";
 import * as Web3 from "@solana/web3.js"
 
-export const connectWallet = async (setWalletAddress, fetchBalance, balance) => {
+export const connectWallet = async () => {
   const { solana } = window;
   try {
     if (solana) {
       const response = await solana.connect();
-      setWalletAddress(response.publicKey.toString());
 
-      // Move the console.log after setting the state
-      fetchBalance(response.publicKey.toString());
-      console.log("balance sa connect: " + fetchBalance(response.publicKey.toString()));
       console.log("Address sa connect: " + response.publicKey.toString());
-      // Create a PublicKey instance after setting walletAddress
     }
   } catch (error) {
     console.log(error);
