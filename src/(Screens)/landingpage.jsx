@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Grid, Typography } from "@mui/material";
-import { connectWallet, fetchBalance } from "../functions/functions.jsx";
+import { connectWalletLanding, fetchBalance } from "../functions/functions.jsx";
 import "../(Components)/css/LandingPage.css";
 import first from "../(Components)/images/first.svg";
 import second from "../(Components)/images/second.svg";
@@ -12,7 +12,7 @@ function LandingPage() {
   const navigate = useNavigate();
 
   const handleConnectWallet = async () => {
-    await connectWallet(setWalletAddress, (walletAddress) => {
+    await connectWalletLanding(setWalletAddress, (walletAddress) => {
       fetchBalance(walletAddress)
         .then((adjustedBalance) => {
           setBalance(adjustedBalance);

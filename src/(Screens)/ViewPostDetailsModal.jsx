@@ -27,7 +27,6 @@ const ViewPostDetailsModal = ({ open, handleClose, postsDetails }) => {
         const formattedTime = date.toLocaleTimeString('en-US');
 
         const formattedDateTime = `${formattedDate} ${formattedTime}`;
-        console.log(postsDetails);
         return formattedDateTime.toLocaleString();
     };
 

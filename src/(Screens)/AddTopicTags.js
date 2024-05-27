@@ -22,7 +22,7 @@ function AddTopicTags({ walletAddress }){
     const navigate = useNavigate();
     useEffect(() => {
         fetchTags();
-        connectWallet();
+        connectWallet()
       }, []);
 
     const opts = {

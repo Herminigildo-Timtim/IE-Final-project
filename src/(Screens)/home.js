@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import TopicModal from "./TopicModal.jsx";
 import Navbar from "./NavBar.js";
 import { connectWallet } from "../functions/functions.jsx";
-
+import ViewTagPostModal from './ViewTagPostModal';
 window.Buffer = Buffer;
 const network = clusterApiUrl("devnet");
 
@@ -29,7 +29,10 @@ function Home({ walletAddress }) {
   const [topComments, setTopComments] = useState([]);
   const [trendingTags, setTrendingTags] = useState([]);
   const [isOpenPost, setIsOpenPost] = useState(false);
-
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [selectedTag, setSelectedTag] = useState(null);
+  const [topicTags, setTopicTags] = useState([]);
   const navigate = useNavigate();
 
   const opts = {
@@ -78,23 +81,68 @@ function Home({ walletAddress }) {
   };
 
   const fetchTags = async () => {
-    try {
-      const program = await createCustomProgram();
-      const tagAccounts = await program.account.addTagAccount.all(); // Fetch all tag accounts
+    const connection = new Connection(network, opts.preflightCommitment);
+    const provider = new AnchorProvider(connection, window.solana, opts);
+    const program = new Program(idl, PROGRAM_ID, provider);
 
-      const tags = tagAccounts.map((tagAccount) => tagAccount.account.name);
-      setTrendingTags(tags);
+    try {
+        const fetchedTags = await program.account.addTagAccount.all();
+        console.log("Fetched Tags:", fetchedTags);
+
+        const tagCounts = {};
+        fetchedTags.forEach(tag => {
+            const tagName = tag.account.name;
+            const tagId = tag.account.id.toString();
+            const tagPubKey = tag.publicKey.toString();
+
+            if (!tagCounts[tagName]) {
+                tagCounts[tagName] = { count: 0, ids: '' };
+            }
+            tagCounts[tagName].count += 1;
+            tagCounts[tagName].ids = tagId;
+            tagCounts[tagName].pubKey = tagPubKey;
+
+        });
+
+        const tagCountsArray = Object.keys(tagCounts).map(tagName => ({
+            tagName,
+            count: tagCounts[tagName].count,
+            id: tagCounts[tagName].ids,
+            pubKey: tagCounts[tagName].pubKey,
+        }));
+
+        tagCountsArray.sort((a, b) => b.count - a.count);
+
+        console.log("Sorted Tag Counts:", tagCountsArray);
+        setTopicTags(tagCountsArray);
+        console.log(topicTags);
     } catch (error) {
-      console.log("Error fetching tags: ", error);
+        console.error("Error fetching tags:", error);
     }
-  };
+};
 
   const newPost = () => {
     setIsOpenPost(true);
   };
+  const handleOpenModal = (topic) => {
+    setSelectedTopic(topic);
+    setOpenModal(true);
+};
 
+const handleCloseTopicModal = () => {
+    setOpenModal(false);
+    setSelectedTopic(null);
+};
+const handleTagClick = (tag) => {
+  setSelectedTag(tag);
+};
+const handleCloseTagClick = (tag) => {
+  setSelectedTag(null);
+};
   const handleCloseModal = () => {
     setIsOpenPost(false);
+    postList();
+    fetchTags();
   };
 
   const goTop = () => {
@@ -162,6 +210,7 @@ function Home({ walletAddress }) {
                   <div
                     key={index}
                     className="cardcont"
+                    onClick={() => handleOpenModal(post)} 
                     style={{ display: "block", overflowY: "visible" }}
                   >
                     <h3>{post.account.name}</h3>
@@ -184,12 +233,14 @@ function Home({ walletAddress }) {
               <Card
                 className="contained"
                 variant="outline"
+                
                 style={{ flexDirection: "row", margin: "0%" }}
               >
                 {topComments.slice(0, 10).map((post, index) => (
                   <div
                     key={index}
                     className="cardcont"
+                    onClick={() => handleOpenModal(post)} 
                     style={{ display: "block", overflowY: "visible" }}
                   >
                     <h3>{post.account.name}</h3>
@@ -208,15 +259,16 @@ function Home({ walletAddress }) {
 
           <div className="trending-tags">
             <h1>Trending Tags</h1>
-            {trendingTags.length > 0 && (
+            {topicTags.length > 0 && (
               <div className="contained">
-                {trendingTags.map((tag, index) => (
+                {topicTags.map((tag, index) => (
                   <Card
                     key={index}
                     className="cardcont"
-                    style={{ minHeight: "62.23px" }}
+                    onClick={() => handleTagClick(tag)}
+                    style={{ minHeight: "62.23px", cursor: 'pointer', width: '200px'}}
                   >
-                    <h3>{tag}</h3>
+                    <h3>{tag.tagName}</h3>
                   </Card>
                 ))}
               </div>
@@ -229,7 +281,7 @@ function Home({ walletAddress }) {
             {topVotes.length > 0 && (
               <div className="contained">
                 {topVotes.map((post, index) => (
-                  <div key={index} className="cardcont">
+                  <div key={index} className="cardcont" onClick={() => handleOpenModal(post)} style={{cursor: 'pointer'}}>
                     <h3>{post.account.name}</h3>
                     <p>Vote Count: {post.account.voteCount}</p>
                     <p>Comment Count: {post.account.commentCount}</p>
@@ -242,6 +294,8 @@ function Home({ walletAddress }) {
                 ))}
               </div>
             )}
+            {selectedTag && <ViewTagPostModal tag={selectedTag} open={!!selectedTag} close={handleCloseTagClick}/>}
+            <TopicModal open={openModal} handleClose={handleCloseTopicModal} topic={selectedTopic} walletAddress={walletAddress}/>
           </div>
         </div>
         <footer className="footer-footer">
